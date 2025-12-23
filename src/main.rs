@@ -1,3 +1,6 @@
+pub mod genepool;
+pub mod population;
+
 use clap::Parser;
 
 #[derive(Parser, Debug)]
