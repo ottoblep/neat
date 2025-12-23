@@ -11,5 +11,12 @@ pub struct GenePool {
     genomes: Vec<dyn Expressible>,
 }
 impl GenePool {
-    fn express_lossy(&self) -> Population {}
+    fn express_lossy(&self) -> Population {
+        let individuals = self
+            .genomes
+            .iter()
+            .map(|g| g.express_lossy())
+            .collect::<Vec<dyn Evaluable>>();
+        Population { pops: individuals }
+    }
 }

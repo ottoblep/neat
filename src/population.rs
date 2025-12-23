@@ -15,5 +15,12 @@ pub struct Population {
     pops: Vec<dyn Evaluable>,
 }
 impl Population {
-    fn reproduce(&self) -> GenePool {}
+    fn reproduce(&self) -> GenePool {
+        let genomes = self
+            .pops
+            .iter()
+            .map(|ind| ind.encode())
+            .collect::<Vec<dyn Expressible>>();
+        GenePool { genomes }
+    }
 }
