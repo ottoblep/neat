@@ -31,7 +31,7 @@ impl Population {
                     .iter()
                     .zip(test_data.outputs.iter())
                     .map(|(input, target)| -> f32 {
-                        let output = individual.evaluate(input);
+                        let output = individual.evaluate(input.clone());
                         (output - target).norm_squared()
                     })
                     .sum(),
