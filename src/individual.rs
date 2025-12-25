@@ -59,7 +59,7 @@ impl Individual {
         }
     }
 
-    pub fn evaluate(&mut self, inputs: &DVector<f32>) -> DVectorView<f32> {
+    fn evaluate(&mut self, inputs: &DVector<f32>) -> DVectorView<f32> {
         assert!(inputs.len() == self.genome.n_in);
         for i in 0..inputs.len() {
             self.state[i] = inputs[i];
@@ -69,7 +69,7 @@ impl Individual {
             .rows(self.state.nrows() - self.genome.n_out, self.genome.n_out)
     }
 
-    pub fn eval_steady_state(&mut self, inputs: &DVector<f32>) -> DVectorView<f32> {
+    fn eval_steady_state(&mut self, inputs: &DVector<f32>) -> DVectorView<f32> {
         for _ in 1..2 * self.genome.size() {
             self.evaluate(inputs);
         }
