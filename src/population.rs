@@ -19,6 +19,14 @@ impl Population {
         Population { pops: pop }
     }
 
+    pub fn seed(genomes: Vec<Genome>) -> Population {
+        let mut pop: Vec<Individual> = vec![];
+        for genome in genomes {
+            pop.push(Individual::new(genome));
+        }
+        Population { pops: pop }
+    }
+
     fn evaluate(&mut self, test_data: TestSet) -> Vec<f32> {
         let mut errors: Vec<f32> = vec![];
         for individual in &mut self.pops {

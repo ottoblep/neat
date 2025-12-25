@@ -1,3 +1,4 @@
+mod data;
 mod individual;
 mod population;
 
