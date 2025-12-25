@@ -1,7 +1,6 @@
 pub mod population;
 
 use clap::Parser;
-use population::Genome;
 
 use crate::population::Individual;
 
@@ -27,10 +26,4 @@ fn main() {
         "Hello {} (from neat)!",
         args.name.unwrap_or("world".to_string())
     );
-
-    let mut genom: Genome = Genome::new::<3, 2>();
-    let mut individ: Individual = Individual::new(genom.clone());
-    let mut res = individ.evaluate::<3, 2>(nalgebra::SVector::<f32, 3>::from_column_slice(&[
-        1.0, 0.5, -1.0,
-    ]));
 }

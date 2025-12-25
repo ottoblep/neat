@@ -12,8 +12,18 @@ struct Metric {}
 #[derive(Clone)]
 struct Genome {
     network: DMatrix<f32>,
+    n_in: usize,
+    n_out: usize,
 }
 impl Genome {
+    pub fn new<const N_IN: usize, const N_OUT: usize>() -> Genome {
+        Genome {
+            network: DMatrix::<f32>::zeros(N_IN + N_OUT, N_IN + N_OUT),
+            n_in: N_IN,
+            n_out: N_OUT,
+        }
+    }
+
     pub fn mutate_edge(&mut self, strength: f32) -> Genome {
         let mut new = self.clone();
         let (i, j) = self.random_idx();
@@ -34,12 +44,6 @@ impl Genome {
         new
     }
 
-    pub fn new<const N_IN: usize, const N_OUT: usize>() -> Genome {
-        Genome {
-            network: DMatrix::<f32>::zeros(N_IN + N_OUT, N_IN + N_OUT),
-        }
-    }
-
     pub fn size(&self) -> usize {
         self.network.nrows()
     }
@@ -56,23 +60,28 @@ pub struct Individual {
     state: DVector<f32>,
 }
 impl Individual {
-    pub fn evaluate<const N_IN: usize, const N_OUT: usize>(
-        &mut self,
-        inputs: SVector<f32, N_IN>,
-    ) -> DVectorView<f32> {
-        assert!(N_IN + N_OUT <= self.genome.size());
-        for i in 0..inputs.len() {
-            self.state[i] = inputs[i];
-        }
-        self.state = &self.genome.network * &self.state;
-        self.state.rows(self.state.nrows() - N_OUT, N_OUT)
-    }
-
     pub fn new(genome: Genome) -> Individual {
         Individual {
             state: DVector::<f32>::zeros(genome.size()),
             genome: genome,
         }
+    }
+
+    fn evaluate(&mut self, inputs: DVector<f32>) -> DVectorView<f32> {
+        assert!(inputs.len() == self.genome.n_in);
+        for i in 0..inputs.len() {
+            self.state[i] = inputs[i];
+        }
+        self.state = &self.genome.network * &self.state;
+        self.state
+            .rows(self.state.nrows() - self.genome.n_out, self.genome.n_out)
+    }
+
+    fn eval_steady_state(&mut self, inputs: DVector<f32>) -> DVectorView<f32> {
+        for _ in 1..2 * self.genome.size() {
+            self.evaluate(inputs.clone());
+        }
+        self.evaluate(inputs)
     }
 }
 
