@@ -19,17 +19,21 @@ impl Population {
         Population { pops: pop }
     }
 
-    fn evaluate(&mut self, test_data: TestSet) {
+    fn evaluate(&mut self, test_data: TestSet) -> Vec<f32> {
+        let mut errors: Vec<f32> = vec![];
         for individual in &mut self.pops {
-            let error_sum: f32 = test_data
-                .inputs
-                .iter()
-                .zip(test_data.outputs.iter())
-                .map(|(input, target)| -> f32 {
-                    let output = individual.evaluate(input);
-                    (output - target).norm_squared()
-                })
-                .sum();
+            errors.push(
+                test_data
+                    .inputs
+                    .iter()
+                    .zip(test_data.outputs.iter())
+                    .map(|(input, target)| -> f32 {
+                        let output = individual.evaluate(input);
+                        (output - target).norm_squared()
+                    })
+                    .sum(),
+            );
         }
+        errors
     }
 }
