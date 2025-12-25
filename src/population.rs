@@ -1,26 +1,35 @@
+use nalgebra::DMatrix;
+
 struct Metric {}
 
-pub trait Evaluable {
-    fn evaluate(&self) -> Metric;
-    fn encode(&self) -> Expressible;
+//     IN H1 H2 OUT
+// IN  0  0  0  0
+// H1  A  0  0  0
+// H2  B  C  0  0
+// OUT D  E  F  0
+#[derive(Clone)]
+struct Individual {
+    network: DMatrix<f32>,
 }
-
-struct Individual<N_IN: usize, N_OUT: usize> {}
-impl Evaluable for Individual {
+impl Individual {
     fn evaluate(&self) -> Metric {}
-    fn encode(&self) -> Expressible {}
+    fn mutate_edge(&mut self, strength: f32) {
+        let nrows = self.network.nrows();
+        let ncols = self.network.ncols();
+        let i = rand::random::<usize>() % nrows;
+        let j = rand::random::<usize>() % ncols;
+        let change = (rand::random::<f32>() - 0.5) * 2.0 * strength;
+        self.network[(i, j)] += change;
+    }
+    fn mutate_addnode(&self) -> Metric {}
+    fn new(n_in: usize, n_out: usize) -> Individual {
+        Individual {
+            network: DMatrix::<f32>::zeros(n_in, n_out),
+        }
+    }
 }
 
 pub struct Population {
-    pops: Vec<dyn Evaluable>,
+    pops: Vec<Individual>,
 }
-impl Population {
-    fn reproduce(&self) -> GenePool {
-        let genomes = self
-            .pops
-            .iter()
-            .map(|ind| ind.encode())
-            .collect::<Vec<dyn Expressible>>();
-        GenePool { genomes }
-    }
-}
+impl Population {}
