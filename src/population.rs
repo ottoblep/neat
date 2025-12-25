@@ -22,20 +22,10 @@ impl Population {
         Population { pops: pop }
     }
 
-    fn evaluate(&mut self, test_data: TestSet) -> Vec<f32> {
+    fn evaluate(&mut self, test_data: &TestSet) -> Vec<f32> {
         let mut errors: Vec<f32> = vec![];
         for individual in &mut self.pops {
-            errors.push(
-                test_data
-                    .inputs
-                    .iter()
-                    .zip(test_data.outputs.iter())
-                    .map(|(input, target)| -> f32 {
-                        let output = individual.evaluate(input.clone());
-                        (output - target).norm_squared()
-                    })
-                    .sum(),
-            );
+            errors.push(individual.test_steady_state(test_data))
         }
         errors
     }

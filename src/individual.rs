@@ -1,3 +1,4 @@
+use crate::data::TestSet;
 use nalgebra::{DMatrix, DVector, DVectorView};
 
 #[derive(Clone)]
@@ -58,7 +59,7 @@ impl Individual {
         }
     }
 
-    pub fn evaluate(&mut self, inputs: DVector<f32>) -> DVectorView<f32> {
+    pub fn evaluate(&mut self, inputs: &DVector<f32>) -> DVectorView<f32> {
         assert!(inputs.len() == self.genome.n_in);
         for i in 0..inputs.len() {
             self.state[i] = inputs[i];
@@ -68,10 +69,21 @@ impl Individual {
             .rows(self.state.nrows() - self.genome.n_out, self.genome.n_out)
     }
 
-    pub fn eval_steady_state(&mut self, inputs: DVector<f32>) -> DVectorView<f32> {
+    pub fn eval_steady_state(&mut self, inputs: &DVector<f32>) -> DVectorView<f32> {
         for _ in 1..2 * self.genome.size() {
-            self.evaluate(inputs.clone());
+            self.evaluate(inputs);
         }
         self.evaluate(inputs)
+    }
+
+    pub fn test_steady_state(&mut self, test_data: &TestSet) -> f32 {
+        test_data
+            .inputs
+            .iter()
+            .zip(test_data.outputs.iter())
+            .map(|(input, output)| -> f32 {
+                (self.eval_steady_state(input) - output).norm_squared()
+            })
+            .sum()
     }
 }
