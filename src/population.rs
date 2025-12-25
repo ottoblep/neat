@@ -14,11 +14,11 @@ impl Population {
         Population { pops: pop }
     }
 
-    pub fn seed(genomes: Vec<Genome>) -> Population {
+    pub fn seed(mut genomes: Vec<Genome>) -> Population {
         Population {
             pops: genomes
-                .iter()
-                .map(|genome| Individual::new(genome.clone()))
+                .drain(..)
+                .map(|genome| Individual::new(genome))
                 .collect(),
         }
     }
