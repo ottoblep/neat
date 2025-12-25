@@ -1,4 +1,5 @@
-pub mod population;
+mod individual;
+mod population;
 
 use clap::Parser;
 
