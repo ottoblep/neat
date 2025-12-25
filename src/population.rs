@@ -15,18 +15,19 @@ impl Population {
     }
 
     pub fn seed(genomes: Vec<Genome>) -> Population {
-        let mut pop: Vec<Individual> = vec![];
-        for genome in genomes {
-            pop.push(Individual::new(genome));
+        Population {
+            pops: genomes
+                .iter()
+                .map(|genome| Individual::new(genome.clone()))
+                .collect(),
         }
-        Population { pops: pop }
     }
 
-    fn evaluate(&mut self, test_data: &TestSet) -> Vec<f32> {
-        let mut errors: Vec<f32> = vec![];
-        for individual in &mut self.pops {
-            errors.push(individual.test_steady_state(test_data))
-        }
-        errors
+    fn reproduce(&mut self, test_data: &TestSet) -> Population {
+        let fitness_values: Vec<f32> = self
+            .pops
+            .iter()
+            .map(|pop| pop.test_steady_state(test_data))
+            .collect();
     }
 }
