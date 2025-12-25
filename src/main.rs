@@ -2,8 +2,6 @@ pub mod population;
 
 use clap::Parser;
 
-use crate::population::Individual;
-
 #[derive(Parser, Debug)]
 #[clap(author = "", version, about)]
 /// Application configuration

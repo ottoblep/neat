@@ -55,7 +55,7 @@ impl Genome {
     }
 }
 
-pub struct Individual {
+struct Individual {
     genome: Genome,
     state: DVector<f32>,
 }
