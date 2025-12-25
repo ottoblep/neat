@@ -29,10 +29,8 @@ fn main() {
     );
 
     let mut genom: Genome = Genome::new::<3, 2>();
-    genom = genom.mutate_addnode();
-    genom = genom.mutate_edge(0.3);
     let mut individ: Individual = Individual::new(genom.clone());
-    let res = individ.evaluate::<3, 2>(nalgebra::SVector::<f32, 3>::from_column_slice(&[
+    let mut res = individ.evaluate::<3, 2>(nalgebra::SVector::<f32, 3>::from_column_slice(&[
         1.0, 0.5, -1.0,
     ]));
 }

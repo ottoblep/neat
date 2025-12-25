@@ -10,7 +10,7 @@ struct Metric {}
 // Allows recurrent connections
 // Internal state, discrete time
 #[derive(Clone)]
-pub struct Genome {
+struct Genome {
     network: DMatrix<f32>,
 }
 impl Genome {
@@ -79,4 +79,13 @@ impl Individual {
 pub struct Population {
     pops: Vec<Individual>,
 }
-impl Population {}
+impl Population {
+    pub fn new<const N_IN: usize, const N_OUT: usize, const N_POP: usize>() -> Population {
+        let mut pop: Vec<Individual> = vec![];
+        for _ in 0..N_POP {
+            let genome = Genome::new::<N_IN, N_OUT>();
+            pop.push(Individual::new(genome));
+        }
+        Population { pops: pop }
+    }
+}
