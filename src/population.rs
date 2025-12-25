@@ -1,10 +1,5 @@
+use crate::data::TestSet;
 use crate::individual::{Genome, Individual};
-use nalgebra::DVector;
-
-struct TestSet {
-    inputs: Vec<DVector<f32>>,
-    outputs: Vec<DVector<f32>>,
-}
 
 pub struct Population {
     pops: Vec<Individual>,
