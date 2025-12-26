@@ -1,0 +1,47 @@
+use nalgebra::DMatrix;
+
+#[derive(Clone)]
+pub struct Genome {
+    pub network: DMatrix<f32>,
+    pub n_in: usize,
+    pub n_out: usize,
+}
+impl Genome {
+    pub fn new<const N_IN: usize, const N_OUT: usize>() -> Genome {
+        Genome {
+            network: DMatrix::<f32>::zeros(N_IN + N_OUT, N_IN + N_OUT),
+            n_in: N_IN,
+            n_out: N_OUT,
+        }
+    }
+
+    pub fn mutate_edge(&mut self, strength: f32) -> Genome {
+        let mut new = self.clone();
+        let (i, j) = self.random_idx();
+        let change = (rand::random::<f32>() - 0.5) * 2.0 * strength;
+        new.network[(i, j)] += change;
+        new
+    }
+
+    pub fn mutate_addnode(&mut self) -> Genome {
+        let mut new = self.clone();
+        let (i, j) = new.random_idx();
+        let size = new.network.nrows();
+        let old_weight = new.network[(i, j)];
+        new.network[(i, j)] = 0.0;
+        new.network.resize_mut(size + 1, size + 1, 0.0);
+        new.network[(i, size)] = 1.0;
+        new.network[(size, j)] = old_weight;
+        new
+    }
+
+    pub fn size(&self) -> usize {
+        self.network.nrows()
+    }
+
+    fn random_idx(&self) -> (usize, usize) {
+        let i = rand::random::<u64>() % self.network.nrows() as u64;
+        let j = rand::random::<u64>() % self.network.ncols() as u64;
+        (i as usize, j as usize)
+    }
+}

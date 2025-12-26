@@ -1,5 +1,6 @@
 use crate::data::TestSet;
-use crate::individual::{Genome, Individual};
+use crate::genome::Genome;
+use crate::individual::Individual;
 
 pub struct Population {
     pops: Vec<Individual>,
@@ -29,5 +30,9 @@ impl Population {
             .iter()
             .map(|pop| pop.test_steady_state(test_data))
             .collect();
+
+        // Sort based on fitness
+        // Copy fittest individuals
+        // return new Population
     }
 }

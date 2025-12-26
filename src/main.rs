@@ -1,4 +1,5 @@
 mod data;
+mod genome;
 mod individual;
 mod population;
 
