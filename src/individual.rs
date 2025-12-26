@@ -20,8 +20,7 @@ impl Individual {
             self.state[i] = inputs[i];
         }
         self.state = &self.genome.network * &self.state;
-        self.state
-            .rows(self.state.nrows() - self.genome.n_out, self.genome.n_out)
+        self.state.rows(self.genome.n_in + 1, self.genome.n_out)
     }
 
     fn eval_steady_state(&mut self, inputs: &DVector<f32>) -> DVectorView<f32> {
