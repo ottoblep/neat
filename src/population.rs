@@ -38,12 +38,10 @@ impl Population {
             a.partial_cmp(&b).unwrap_or(std::cmp::Ordering::Equal)
         });
 
-        let sorted_individuals: Vec<Individual> =
-            indexed_fitness.iter().map(|(i, _)| self.pops[*i]).collect();
-
         Population {
-            pops: sorted_individuals
+            pops: indexed_fitness
                 .iter()
+                .map(|(i, _)| self.pops[*i])
                 .take(N_POP_REPROD)
                 .map(|ind| ind.reproduce())
                 .collect(),
