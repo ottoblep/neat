@@ -27,12 +27,12 @@ impl Population {
     fn sort_by_fitness(&mut self, test_data: &TestSet) -> Vec<usize> {
         let mut indexed_fitness: Vec<(usize, f32)> = self
             .pops
-            .iter()
-            .map(|pop| pop.test_steady_state(test_data))
+            .iter_mut()
+            .map(|pop: &mut Individual| pop.test_steady_state(test_data))
             .enumerate()
             .collect();
 
-        indexed_fitness.sort_unstable_by(|(i_a, a): &(usize, f32), (i_b, b): &(usize, f32)| {
+        indexed_fitness.sort_unstable_by(|(_, a): &(usize, f32), (_, b): &(usize, f32)| {
             a.partial_cmp(&b).unwrap_or(std::cmp::Ordering::Equal)
         });
 
@@ -42,7 +42,7 @@ impl Population {
             .collect()
     }
 
-    fn reproduce<const N_POP_REPROD: usize>(&mut self, test_data: &TestSet) -> Population {
+    fn reproduce<const N_POP_REPROD: usize>(&self, test_data: &TestSet) -> Population {
         let order = self.sort_by_fitness(test_data);
         Population {
             pops: order
