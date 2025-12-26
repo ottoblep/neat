@@ -24,7 +24,7 @@ impl Population {
         }
     }
 
-    fn reproduce<const N_POP_REPROD: usize>(&mut self, test_data: &TestSet) -> Population {
+    fn sort_by_fitness(&mut self, test_data: &TestSet) -> Vec<usize> {
         let mut indexed_fitness: Vec<(usize, f32)> = self
             .pops
             .iter()
@@ -36,10 +36,18 @@ impl Population {
             a.partial_cmp(&b).unwrap_or(std::cmp::Ordering::Equal)
         });
 
+        indexed_fitness
+            .drain(..)
+            .map(|(i_a, _): (usize, f32)| i_a)
+            .collect()
+    }
+
+    fn reproduce<const N_POP_REPROD: usize>(&mut self, test_data: &TestSet) -> Population {
+        let order = self.sort_by_fitness(test_data);
         Population {
-            pops: indexed_fitness
-                .iter()
-                .map(|(i, _)| self.pops[*i])
+            pops: order
+                .drain(..)
+                .map(|i| self.pops[i])
                 .take(N_POP_REPROD)
                 .map(|ind| ind.reproduce())
                 .collect(),
