@@ -1,3 +1,5 @@
+use rand::seq::index;
+
 use crate::data::TestSet;
 use crate::genome::Genome;
 use crate::individual::Individual;
@@ -24,15 +26,27 @@ impl Population {
         }
     }
 
-    fn reproduce(&mut self, test_data: &TestSet) -> Population {
-        let fitness_values: Vec<f32> = self
+    fn reproduce<const N_POP_REPROD: usize>(&mut self, test_data: &TestSet) -> Population {
+        let mut indexed_fitness: Vec<(usize, f32)> = self
             .pops
             .iter()
             .map(|pop| pop.test_steady_state(test_data))
+            .enumerate()
             .collect();
 
-        // Sort based on fitness
-        // Copy fittest individuals
-        // return new Population
+        indexed_fitness.sort_unstable_by(|(i_a, a): &(usize, f32), (i_b, b): &(usize, f32)| {
+            a.partial_cmp(&b).unwrap_or(std::cmp::Ordering::Equal)
+        });
+
+        let sorted_individuals: Vec<Individual> =
+            indexed_fitness.iter().map(|(i, _)| self.pops[*i]).collect();
+
+        Population {
+            pops: sorted_individuals
+                .iter()
+                .take(N_POP_REPROD)
+                .map(|ind| ind.reproduce())
+                .collect(),
+        }
     }
 }
