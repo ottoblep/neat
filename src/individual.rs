@@ -7,7 +7,8 @@ pub struct Individual {
     state: DVector<f32>,
 }
 impl Individual {
-    pub fn new(genome: Genome) -> Individual {
+    pub fn new<const N_IN: usize, const N_OUT: usize>() -> Individual {
+        let genome = Genome::new::<N_IN, N_OUT>();
         Individual {
             state: DVector::<f32>::zeros(genome.size()),
             genome: genome,
