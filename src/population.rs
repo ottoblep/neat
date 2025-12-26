@@ -1,5 +1,3 @@
-use rand::seq::index;
-
 use crate::data::TestSet;
 use crate::genome::Genome;
 use crate::individual::Individual;
