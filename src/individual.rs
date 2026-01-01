@@ -43,16 +43,6 @@ impl Individual {
         self.evaluate(inputs)
     }
 
-    pub fn reproduce(&self) -> Individual {
-        let genome = self.genome.clone();
-        if rand::rng().random_range(0..100) < EDGE_MUT_CHANCE {
-            genome.mutate_edge(EDGE_MUT_STRENGTH);
-        }
-        if rand::rng().random_range(0..100) < NODE_MUT_CHANCE {
-            genome.mutate_addnode();
-        }
-    }
-
     pub fn test_steady_state(&mut self, test_data: &TestSet) -> f32 {
         test_data
             .inputs
@@ -62,5 +52,15 @@ impl Individual {
                 (self.eval_steady_state(input) - output).norm_squared()
             })
             .sum()
+    }
+
+    pub fn reproduce(&self) -> Individual {
+        let genome = self.genome.clone();
+        if rand::rng().random_range(0..100) < EDGE_MUT_CHANCE {
+            genome.mutate_edge(EDGE_MUT_STRENGTH);
+        }
+        if rand::rng().random_range(0..100) < NODE_MUT_CHANCE {
+            genome.mutate_addnode();
+        }
     }
 }
