@@ -31,12 +31,12 @@ impl Population {
             .collect()
     }
 
-    fn reproduce<const N_POP_REPROD: usize>(&self, test_data: &TestSet) -> Population {
-        let order = self.sort_by_fitness(test_data);
+    pub fn reproduce<const N_POP_REPROD: usize>(&mut self, test_data: &TestSet) -> Population {
+        let mut order = self.sort_by_fitness(test_data);
         Population {
             pops: order
                 .drain(..)
-                .map(|i| self.pops[i])
+                .map(|i| self.pops[i].clone())
                 .take(N_POP_REPROD)
                 .map(|ind| ind.reproduce())
                 .collect(),

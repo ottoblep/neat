@@ -7,6 +7,7 @@ const EDGE_MUT_CHANCE: u32 = 50;
 const EDGE_MUT_STRENGTH: f32 = 0.1;
 const NODE_MUT_CHANCE: u32 = 20;
 
+#[derive(Clone)]
 pub struct Individual {
     genome: Genome,
     state: DVector<f32>,
