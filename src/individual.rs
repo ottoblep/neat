@@ -55,12 +55,12 @@ impl Individual {
             .sum()
     }
 
-    pub fn reproduce(&self) -> Individual {
+    pub fn reproduce<T: Rng>(&self, rng_dev: &mut T) -> Individual {
         let mut genome = self.genome.clone();
-        if rand::rng().random_range(0..100) < EDGE_MUT_CHANCE {
+        if rng_dev.random_range(0..100) < EDGE_MUT_CHANCE {
             genome.mutate_edge(EDGE_MUT_STRENGTH);
         }
-        if rand::rng().random_range(0..100) < NODE_MUT_CHANCE {
+        if rng_dev.random_range(0..100) < NODE_MUT_CHANCE {
             genome.mutate_addnode();
         }
         Individual::from_genome(genome)

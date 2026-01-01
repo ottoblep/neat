@@ -1,5 +1,6 @@
 use crate::data::TestSet;
 use crate::individual::Individual;
+use rand::Rng;
 
 pub struct Population {
     pops: Vec<Individual>,
@@ -33,12 +34,13 @@ impl Population {
 
     pub fn reproduce<const N_POP_REPROD: usize>(&mut self, test_data: &TestSet) -> Population {
         let mut order = self.sort_by_fitness(test_data);
+        let mut rng = rand::rng();
         Population {
             pops: order
                 .drain(..)
                 .map(|i| self.pops[i].clone())
                 .take(N_POP_REPROD)
-                .map(|ind| ind.reproduce())
+                .map(|ind| ind.reproduce(&mut rng))
                 .collect(),
         }
     }
