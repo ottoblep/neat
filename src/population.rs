@@ -1,6 +1,8 @@
 use crate::data::TestSet;
 use crate::individual::Individual;
 
+const N_POP_REPROD: usize = 50;
+
 pub struct Population {
     pops: Vec<Individual>,
 }
