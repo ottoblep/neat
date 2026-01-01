@@ -5,6 +5,9 @@ mod population;
 
 use clap::Parser;
 
+const NUM_GENERATIONS: usize = 100;
+const N_POP_REPROD: usize = 50;
+
 #[derive(Parser, Debug)]
 #[clap(author = "", version, about)]
 /// Application configuration
@@ -27,4 +30,10 @@ fn main() {
         "Hello {} (from neat)!",
         args.name.unwrap_or("world".to_string())
     );
+
+    let mut pop = population::Population::new::<2, 1, 100>();
+
+    for _generation in 0..NUM_GENERATIONS {
+        let test_data = pop = pop.reproduce::<N_POP_REPROD>(&test_data);
+    }
 }

@@ -1,6 +1,5 @@
 use crate::data::TestSet;
 use crate::individual::Individual;
-use rand::Rng;
 
 pub struct Population {
     pops: Vec<Individual>,
