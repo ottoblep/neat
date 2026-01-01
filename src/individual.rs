@@ -55,7 +55,7 @@ impl Individual {
             .sum()
     }
 
-    pub fn reproduce<T: Rng>(&self, rng_dev: &mut T) -> Individual {
+    pub fn reproduce<RNG: Rng>(&self, rng_dev: &mut RNG) -> Individual {
         let mut genome = self.genome.clone();
         if rng_dev.random_range(0..100) < EDGE_MUT_CHANCE {
             genome.mutate_edge(EDGE_MUT_STRENGTH);
