@@ -79,13 +79,13 @@ impl Individual {
     }
 
     #[must_use]
-    pub fn reproduce<RNG: Rng>(&self, rng_dev: &mut RNG, conf: &Config) -> Individual {
+    pub fn reproduce(&self, rng_dev: &mut impl Rng, conf: &Config) -> Individual {
         let mut genome = self.genome.clone();
         if rng_dev.random_range(0..100) < conf.edge_mut_chance {
-            genome = genome.mutate_edge(conf.edge_mut_strength);
+            genome = genome.mutate_edge(conf.edge_mut_strength, rng_dev);
         }
         if rng_dev.random_range(0..100) < conf.node_mut_chance {
-            genome = genome.mutate_addnode();
+            genome = genome.mutate_addnode(rng_dev);
         }
         Individual::from_genome(genome)
     }
@@ -103,8 +103,9 @@ mod tests {
         const TEST_GENOME_SIZE: usize = 8;
 
         let mut genome = super::Genome::new::<TEST_IN, TEST_OUT>();
-        genome = genome.mutate_addnode();
-        genome = genome.mutate_addnode();
+        let mut rng = rand::rng();
+        genome = genome.mutate_addnode(&mut rng);
+        genome = genome.mutate_addnode(&mut rng);
         assert_eq!(genome.size(), TEST_GENOME_SIZE);
         let ind: Individual = Individual::from_genome(genome);
         assert_eq!(ind.genome.n_in, TEST_IN);
@@ -121,9 +122,10 @@ mod tests {
         use nalgebra::dvector;
 
         let mut genome = super::Genome::new::<2, 1>();
-        genome = genome.mutate_addnode();
-        genome = genome.mutate_addnode();
-        genome = genome.mutate_addnode();
+        let mut rng = rand::rng();
+        genome = genome.mutate_addnode(&mut rng);
+        genome = genome.mutate_addnode(&mut rng);
+        genome = genome.mutate_addnode(&mut rng);
         let mut ind: Individual = Individual::from_genome(genome);
         ind.state = dvector![-2.0, -3.0, -4.0, 5.0, -6.0, -7.0];
         ind.rectify();
@@ -152,10 +154,11 @@ mod tests {
             node_mut_chance: 5,
             steady_state_eval_steps_multiplier: 2,
         };
+        let mut rng = rand::rng();
         let mut genome = super::Genome::new::<2, 1>();
         let mut ind: Individual = Individual::from_genome(genome.clone());
         let fitness_before: f32 = ind.test_steady_state(&xor_test_inputs, &test_config);
-        let genome_mut = genome.mutate_addnode();
+        let genome_mut = genome.mutate_addnode(&mut rng);
         let mut ind2: Individual = Individual::from_genome(genome_mut);
         let fitness_after: f32 = ind2.test_steady_state(&xor_test_inputs, &test_config);
         assert_eq!(fitness_before, fitness_after);

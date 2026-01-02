@@ -1,4 +1,5 @@
 use nalgebra::DMatrix;
+use rand::Rng;
 
 #[derive(Clone)]
 pub struct Genome {
@@ -17,25 +18,25 @@ impl Genome {
     }
 
     #[must_use]
-    fn random_idx(&self) -> (usize, usize) {
-        let i = rand::random::<u64>() % self.network.nrows() as u64;
-        let j = rand::random::<u64>() % self.network.ncols() as u64;
+    fn random_idx(&self, rng_dev: &mut impl Rng) -> (usize, usize) {
+        let i = rng_dev.random::<u64>() % self.network.nrows() as u64;
+        let j = rng_dev.random::<u64>() % self.network.ncols() as u64;
         (i as usize, j as usize)
     }
 
     #[must_use]
-    pub fn mutate_edge(&mut self, strength: f32) -> Genome {
+    pub fn mutate_edge(&mut self, strength: f32, rng_dev: &mut impl Rng) -> Genome {
         let mut new = self.clone();
-        let (i, j) = self.random_idx();
-        let change = (rand::random::<f32>() - 0.5) * 2.0 * strength;
+        let (i, j) = self.random_idx(rng_dev);
+        let change = (rng_dev.random::<f32>() - 0.5) * 2.0 * strength;
         new.network[(i, j)] += change;
         new
     }
 
     #[must_use]
-    pub fn mutate_addnode(&mut self) -> Genome {
+    pub fn mutate_addnode(&mut self, rng_dev: &mut impl Rng) -> Genome {
         let mut new = self.clone();
-        let (i, j) = new.random_idx();
+        let (i, j) = new.random_idx(rng_dev);
         let size = new.network.nrows();
         let old_weight = new.network[(i, j)];
         new.network[(i, j)] = 0.0;
