@@ -72,7 +72,15 @@ impl Genome {
     pub fn print(&self) {
         println!("  Network weights:");
         for col in 0..self.network.ncols() {
+            if col > 10 {
+                println!("    ...");
+                break;
+            }
             for row in 0..self.network.nrows() {
+                if row > 15 {
+                    println!("    ...");
+                    break;
+                }
                 print!("{:>8.3} ", self.network[(row, col)]);
             }
             println!();
