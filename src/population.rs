@@ -13,7 +13,7 @@ impl Population {
         }
     }
 
-    fn sort_by_fitness(&mut self, test_data: &TestSet) -> Vec<usize> {
+    fn get_sorted_idxs_by_fitness(&mut self, test_data: &TestSet) -> Vec<usize> {
         let mut indexed_fitness: Vec<(usize, f32)> = self
             .pops
             .iter_mut()
@@ -37,7 +37,7 @@ impl Population {
     }
 
     pub fn reproduce(&mut self, test_data: &TestSet, n_fittest_reprod: usize) -> Population {
-        let mut order = self.sort_by_fitness(test_data);
+        let mut order = self.get_sorted_idxs_by_fitness(test_data);
         let mut rng = rand::rng();
         Population {
             pops: order
