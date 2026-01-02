@@ -19,7 +19,7 @@ fn main() {
         node_mut_chance: 60,
         steady_state_eval_steps_multiplier: 2,
     };
-    let xor_test_inputs: TestSet = TestSet {
+    let multiplication_test_inputs: TestSet = TestSet {
         inputs: vec![
             dvector![1.0, 2.0],
             dvector![5.0, 6.0],
@@ -36,7 +36,8 @@ fn main() {
     let mut rng = rand::rng();
     let mut pop = Population::new::<2, 1>(conf.n_pop);
     for _generation in 0..conf.num_generations {
-        let (new_pop, population_stats) = pop.reproduce(&xor_test_inputs, &mut rng, &conf);
+        let (new_pop, population_stats) =
+            pop.reproduce(&multiplication_test_inputs, &mut rng, &conf);
         println!("Generation {_generation}:");
         population_stats.print();
         pop = new_pop;
