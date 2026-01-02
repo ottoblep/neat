@@ -1,4 +1,4 @@
-use crate::config::CONFIG;
+use crate::config::{CONFIG, Config};
 use crate::data::TestSet;
 use crate::genome::Genome;
 use nalgebra::DVector;
@@ -49,8 +49,8 @@ impl Individual {
         self.state.rows(self.genome.n_in, self.genome.n_out).into()
     }
 
-    fn eval_steady_state(&mut self, inputs: &DVector<f32>) -> DVector<f32> {
-        for _ in 1..CONFIG.steady_state_eval_steps_multiplier * self.genome.size() {
+    fn eval_steady_state(&mut self, inputs: &DVector<f32>, conf: &Config) -> DVector<f32> {
+        for _ in 1..conf.steady_state_eval_steps_multiplier * self.genome.size() {
             self.evaluate(inputs);
         }
         self.evaluate(inputs).into()
@@ -67,24 +67,24 @@ impl Individual {
     }
 
     #[must_use]
-    pub fn test_steady_state(&mut self, test_data: &TestSet) -> f32 {
+    pub fn test_steady_state(&mut self, test_data: &TestSet, conf: &Config) -> f32 {
         test_data
             .inputs
             .iter()
             .zip(test_data.outputs.iter())
             .map(|(input, output)| -> f32 {
-                (self.eval_steady_state(input) - output).norm_squared()
+                (self.eval_steady_state(input, conf) - output).norm_squared()
             })
             .sum()
     }
 
     #[must_use]
-    pub fn reproduce<RNG: Rng>(&self, rng_dev: &mut RNG) -> Individual {
+    pub fn reproduce<RNG: Rng>(&self, rng_dev: &mut RNG, conf: &Config) -> Individual {
         let mut genome = self.genome.clone();
-        if rng_dev.random_range(0..100) < CONFIG.edge_mut_chance {
-            genome = genome.mutate_edge(CONFIG.edge_mut_strength);
+        if rng_dev.random_range(0..100) < conf.edge_mut_chance {
+            genome = genome.mutate_edge(conf.edge_mut_strength);
         }
-        if rng_dev.random_range(0..100) < CONFIG.node_mut_chance {
+        if rng_dev.random_range(0..100) < conf.node_mut_chance {
             genome = genome.mutate_addnode();
         }
         Individual::from_genome(genome)

@@ -1,3 +1,4 @@
+use crate::config::Config;
 use crate::data::TestSet;
 use crate::genome::Genome;
 use crate::individual::Individual;
@@ -28,20 +29,20 @@ pub struct Population {
 }
 impl Population {
     #[must_use]
-    pub fn new<const N_IN: usize, const N_OUT: usize, const N_POP: usize>() -> Population {
+    pub fn new<const N_IN: usize, const N_OUT: usize>(n_pop: usize) -> Population {
         Population {
-            pops: (0..N_POP)
+            pops: (0..n_pop)
                 .map(|_| Individual::new::<N_IN, N_OUT>())
                 .collect(),
         }
     }
 
     #[must_use]
-    fn evaluate(&mut self, test_data: &TestSet) -> EvaluationResult {
+    fn evaluate(&mut self, test_data: &TestSet, conf: &Config) -> EvaluationResult {
         let mut indexed_fitness: Vec<(usize, f32)> = self
             .pops
             .iter_mut()
-            .map(|pop: &mut Individual| pop.test_steady_state(test_data))
+            .map(|pop: &mut Individual| pop.test_steady_state(test_data, conf))
             .enumerate()
             .collect();
 
@@ -97,17 +98,17 @@ impl Population {
     pub fn reproduce(
         &mut self,
         test_data: &TestSet,
-        n_fittest_reprod: usize,
+        conf: &Config,
     ) -> (Population, PopulationStats) {
-        let eval_result: EvaluationResult = self.evaluate(test_data);
+        let eval_result: EvaluationResult = self.evaluate(test_data, conf);
         let mut rng = rand::rng();
         let mut pop = Population {
             pops: eval_result
                 .sorted_idxs
                 .iter()
                 .map(|i: &usize| self.pops[*i].clone())
-                .take(n_fittest_reprod)
-                .map(|ind| ind.reproduce(&mut rng))
+                .take(conf.n_fittest_reproduce)
+                .map(|ind| ind.reproduce(&mut rng, conf))
                 .collect(),
         };
         pop.expand(self.pops.len());
