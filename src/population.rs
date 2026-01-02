@@ -1,6 +1,12 @@
 use crate::data::TestSet;
 use crate::individual::Individual;
 
+struct FitnessResults {
+    average_fitness: f32,
+    best_fitness: f32,
+    sorted_indices: Vec<usize>,
+}
+
 pub struct Population {
     pops: Vec<Individual>,
 }
@@ -13,7 +19,7 @@ impl Population {
         }
     }
 
-    fn get_sorted_idxs_by_fitness(&mut self, test_data: &TestSet) -> Vec<usize> {
+    fn get_sorted_idxs_by_fitness(&mut self, test_data: &TestSet) -> FitnessResults {
         let mut indexed_fitness: Vec<(usize, f32)> = self
             .pops
             .iter_mut()
@@ -21,14 +27,31 @@ impl Population {
             .enumerate()
             .collect();
 
+        let average_fitness: f32 = indexed_fitness
+            .iter()
+            .map(|(_, fit): &(usize, f32)| *fit)
+            .sum::<f32>()
+            / indexed_fitness.len() as f32;
+
+        let best_fitness: f32 = indexed_fitness
+            .iter()
+            .map(|(_, fit): &(usize, f32)| *fit)
+            .fold(f32::MIN, |a, b| a.max(b));
+
         indexed_fitness.sort_unstable_by(|(_, a): &(usize, f32), (_, b): &(usize, f32)| {
             a.partial_cmp(&b).unwrap_or(std::cmp::Ordering::Equal)
         });
 
-        indexed_fitness
+        let sorted_idxs = indexed_fitness
             .drain(..)
             .map(|(i_a, _): (usize, f32)| i_a)
-            .collect()
+            .collect();
+
+        FitnessResults {
+            average_fitness: average_fitness,
+            best_fitness: best_fitness,
+            sorted_indices: sorted_idxs,
+        }
     }
 
     pub fn average_genome_size(&self) -> f32 {
@@ -37,12 +60,13 @@ impl Population {
     }
 
     pub fn reproduce(&mut self, test_data: &TestSet, n_fittest_reprod: usize) -> Population {
-        let mut order = self.get_sorted_idxs_by_fitness(test_data);
+        let fitness_results: FitnessResults = self.get_sorted_idxs_by_fitness(test_data);
         let mut rng = rand::rng();
         Population {
-            pops: order
-                .drain(..)
-                .map(|i| self.pops[i].clone())
+            pops: fitness_results
+                .sorted_indices
+                .iter()
+                .map(|i: &usize| self.pops[*i].clone())
                 .take(n_fittest_reprod)
                 .map(|ind| ind.reproduce(&mut rng))
                 .collect(),
