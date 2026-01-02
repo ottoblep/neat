@@ -93,6 +93,8 @@ impl Individual {
 
 #[cfg(test)]
 mod tests {
+    use crate::{config::Config, data::TestSet};
+
     #[test]
     fn test_from_genome() {
         use super::Individual;
@@ -126,5 +128,36 @@ mod tests {
         ind.state = dvector![-2.0, -3.0, -4.0, 5.0, -6.0, -7.0];
         ind.rectify();
         assert_eq!(ind.state, dvector![-2.0, -3.0, 0.0, 5.0, 0.0, -7.0]);
+    }
+
+    #[test]
+    fn test_nondestructive_addnode() {
+        use super::Individual;
+        use nalgebra::dvector;
+        let xor_test_inputs: TestSet = TestSet {
+            inputs: vec![
+                dvector![0.0, 0.0],
+                dvector![0.0, 1.0],
+                dvector![1.0, 0.0],
+                dvector![1.0, 1.0],
+            ],
+            outputs: vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
+        };
+        let test_config: Config = Config {
+            num_generations: 100,
+            n_pop: 50,
+            n_fittest_reproduce: 10,
+            edge_mut_chance: 80,
+            edge_mut_strength: 0.1,
+            node_mut_chance: 5,
+            steady_state_eval_steps_multiplier: 2,
+        };
+        let mut genome = super::Genome::new::<2, 1>();
+        let mut ind: Individual = Individual::from_genome(genome.clone());
+        let fitness_before: f32 = ind.test_steady_state(&xor_test_inputs, &test_config);
+        genome = genome.mutate_addnode();
+        let mut ind2: Individual = Individual::from_genome(genome.clone());
+        let fitness_after: f32 = ind2.test_steady_state(&xor_test_inputs, &test_config);
+        assert_eq!(fitness_before, fitness_after);
     }
 }
