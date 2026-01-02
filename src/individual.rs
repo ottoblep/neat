@@ -81,10 +81,10 @@ impl Individual {
     pub fn reproduce<RNG: Rng>(&self, rng_dev: &mut RNG) -> Individual {
         let mut genome = self.genome.clone();
         if rng_dev.random_range(0..100) < EDGE_MUT_CHANCE {
-            genome.mutate_edge(EDGE_MUT_STRENGTH);
+            genome = genome.mutate_edge(EDGE_MUT_STRENGTH);
         }
         if rng_dev.random_range(0..100) < NODE_MUT_CHANCE {
-            genome.mutate_addnode();
+            genome = genome.mutate_addnode();
         }
         Individual::from_genome(genome)
     }
@@ -100,8 +100,8 @@ mod tests {
         const TEST_GENOME_SIZE: usize = 8;
 
         let mut genome = super::Genome::new::<TEST_IN, TEST_OUT>();
-        genome.mutate_addnode();
-        genome.mutate_addnode();
+        genome = genome.mutate_addnode();
+        genome = genome.mutate_addnode();
         assert_eq!(genome.size(), TEST_GENOME_SIZE);
         let ind: Individual = Individual::from_genome(genome);
         assert_eq!(ind.genome.n_in, TEST_IN);
