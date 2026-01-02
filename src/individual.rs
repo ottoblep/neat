@@ -6,6 +6,7 @@ use rand::Rng;
 const EDGE_MUT_CHANCE: u32 = 50;
 const EDGE_MUT_STRENGTH: f32 = 0.1;
 const NODE_MUT_CHANCE: u32 = 20;
+const STEADY_STATE_EVAL_STEPS_MULTIPLIER: usize = 2;
 
 #[derive(Clone)]
 pub struct Individual {
@@ -38,7 +39,7 @@ impl Individual {
     }
 
     fn eval_steady_state(&mut self, inputs: &DVector<f32>) -> DVectorView<f32> {
-        for _ in 1..2 * self.genome.size() {
+        for _ in 1..STEADY_STATE_EVAL_STEPS_MULTIPLIER * self.genome.size() {
             self.evaluate(inputs);
         }
         self.evaluate(inputs)
