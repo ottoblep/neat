@@ -84,3 +84,21 @@ impl Individual {
         Individual::from_genome(genome)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_rectiy() {
+        use super::Individual;
+        use nalgebra::dvector;
+
+        let mut genome = super::Genome::new::<2, 1>();
+        genome = genome.mutate_addnode();
+        genome = genome.mutate_addnode();
+        genome = genome.mutate_addnode();
+        let mut ind: Individual = Individual::from_genome(genome);
+        ind.state = dvector![-1.0, -1.0, -1.0, 1.0, -1.0, -1.0];
+        ind.rectify();
+        assert_eq!(ind.state, dvector![-1.0, -1.0, 0.0, 1.0, 0.0, -1.0]);
+    }
+}
