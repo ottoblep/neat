@@ -69,6 +69,17 @@ impl Population {
         }
     }
 
+    fn expand(&mut self, target_size: usize) {
+        self.pops
+            .clone()
+            .iter()
+            .cycle()
+            .take(target_size - self.pops.len())
+            .for_each(|ind| {
+                self.pops.push(ind.clone());
+            });
+    }
+
     pub fn average_genome_size(&self) -> f32 {
         let total_size: usize = self.pops.iter().map(|ind| ind.genome_size()).sum();
         total_size as f32 / self.pops.len() as f32
@@ -81,28 +92,16 @@ impl Population {
     ) -> (Population, PopulationStats) {
         let eval_result: EvaluationResult = self.evaluate(test_data);
         let mut rng = rand::rng();
-        (
-            Population {
-                pops: eval_result
-                    .sorted_idxs
-                    .iter()
-                    .map(|i: &usize| self.pops[*i].clone())
-                    .take(n_fittest_reprod)
-                    .map(|ind| ind.reproduce(&mut rng))
-                    .collect(),
-            },
-            eval_result.population_stats,
-        )
-    }
-
-    pub fn expand(&mut self, target_size: usize) {
-        self.pops
-            .clone()
-            .iter()
-            .cycle()
-            .take(target_size - self.pops.len())
-            .for_each(|ind| {
-                self.pops.push(ind.clone());
-            });
+        let mut pop = Population {
+            pops: eval_result
+                .sorted_idxs
+                .iter()
+                .map(|i: &usize| self.pops[*i].clone())
+                .take(n_fittest_reprod)
+                .map(|ind| ind.reproduce(&mut rng))
+                .collect(),
+        };
+        pop.expand(self.pops.len());
+        (pop, eval_result.population_stats)
     }
 }

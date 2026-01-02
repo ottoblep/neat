@@ -23,10 +23,9 @@ fn main() {
 
     let mut pop = population::Population::new::<2, 1, N_POP>();
     for _generation in 0..NUM_GENERATIONS {
-        let (mut new_pop, population_stats) = pop.reproduce(&xor_test_inputs, N_FITTEST_REPRODUCE);
+        let (new_pop, population_stats) = pop.reproduce(&xor_test_inputs, N_FITTEST_REPRODUCE);
         println!("Generation {_generation}:");
         population_stats.print();
-        new_pop.expand(N_POP);
         pop = new_pop;
     }
 }
