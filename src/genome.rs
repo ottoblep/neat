@@ -7,6 +7,7 @@ pub struct Genome {
     pub n_out: usize,
 }
 impl Genome {
+    #[must_use]
     pub fn new<const N_IN: usize, const N_OUT: usize>() -> Genome {
         Genome {
             network: DMatrix::<f32>::zeros(N_IN + N_OUT, N_IN + N_OUT),
@@ -15,6 +16,7 @@ impl Genome {
         }
     }
 
+    #[must_use]
     pub fn mutate_edge(&mut self, strength: f32) -> Genome {
         let mut new = self.clone();
         let (i, j) = self.random_idx();
@@ -23,6 +25,7 @@ impl Genome {
         new
     }
 
+    #[must_use]
     pub fn mutate_addnode(&mut self) -> Genome {
         let mut new = self.clone();
         let (i, j) = new.random_idx();
@@ -35,14 +38,17 @@ impl Genome {
         new
     }
 
+    #[must_use]
     pub fn size(&self) -> usize {
         self.network.nrows()
     }
 
+    #[must_use]
     pub fn nodes(&self) -> usize {
         self.network.nrows() - self.n_in - self.n_out
     }
 
+    #[must_use]
     fn random_idx(&self) -> (usize, usize) {
         let i = rand::random::<u64>() % self.network.nrows() as u64;
         let j = rand::random::<u64>() % self.network.ncols() as u64;

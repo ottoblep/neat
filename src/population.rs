@@ -23,6 +23,7 @@ pub struct Population {
     pops: Vec<Individual>,
 }
 impl Population {
+    #[must_use]
     pub fn new<const N_IN: usize, const N_OUT: usize, const N_POP: usize>() -> Population {
         Population {
             pops: (0..N_POP)
@@ -31,6 +32,7 @@ impl Population {
         }
     }
 
+    #[must_use]
     fn evaluate(&mut self, test_data: &TestSet) -> EvaluationResult {
         let mut indexed_fitness: Vec<(usize, f32)> = self
             .pops
@@ -80,11 +82,13 @@ impl Population {
             });
     }
 
+    #[must_use]
     pub fn average_genome_size(&self) -> f32 {
         let total_size: usize = self.pops.iter().map(|ind| ind.genome_size()).sum();
         total_size as f32 / self.pops.len() as f32
     }
 
+    #[must_use]
     pub fn reproduce(
         &mut self,
         test_data: &TestSet,

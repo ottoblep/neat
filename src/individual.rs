@@ -14,6 +14,7 @@ pub struct Individual {
     state: DVector<f32>,
 }
 impl Individual {
+    #[must_use]
     pub fn new<const N_IN: usize, const N_OUT: usize>() -> Individual {
         let genome = Genome::new::<N_IN, N_OUT>();
         Individual {
@@ -22,6 +23,7 @@ impl Individual {
         }
     }
 
+    #[must_use]
     fn from_genome(genome: Genome) -> Individual {
         Individual {
             state: DVector::<f32>::zeros(genome.size()),
@@ -58,10 +60,12 @@ impl Individual {
         self.evaluate(inputs).into()
     }
 
+    #[must_use]
     pub fn genome_size(&self) -> usize {
         self.genome.size()
     }
 
+    #[must_use]
     pub fn test_steady_state(&mut self, test_data: &TestSet) -> f32 {
         test_data
             .inputs
@@ -73,6 +77,7 @@ impl Individual {
             .sum()
     }
 
+    #[must_use]
     pub fn reproduce<RNG: Rng>(&self, rng_dev: &mut RNG) -> Individual {
         let mut genome = self.genome.clone();
         if rng_dev.random_range(0..100) < EDGE_MUT_CHANCE {
