@@ -3,10 +3,10 @@ use crate::genome::Genome;
 use crate::individual::Individual;
 
 pub struct PopulationStats {
-    average_fitness: f32,
-    best_fitness: f32,
-    average_genome_size: f32,
-    best_genome: Genome,
+    pub average_fitness: f32,
+    pub best_fitness: f32,
+    pub average_genome_size: f32,
+    pub best_genome: Genome,
 }
 impl PopulationStats {
     pub fn print(&self) {
