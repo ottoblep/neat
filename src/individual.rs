@@ -88,7 +88,27 @@ impl Individual {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn test_rectiy() {
+    fn test_from_genome() {
+        use super::Individual;
+        const TEST_IN: usize = 4;
+        const TEST_OUT: usize = 2;
+        const TEST_GENOME_SIZE: usize = 8;
+
+        let mut genome = super::Genome::new::<TEST_IN, TEST_OUT>();
+        genome.mutate_addnode();
+        genome.mutate_addnode();
+        assert_eq!(genome.size(), TEST_GENOME_SIZE);
+        let ind: Individual = Individual::from_genome(genome);
+        assert_eq!(ind.genome.n_in, TEST_IN);
+        assert_eq!(ind.genome.n_out, TEST_OUT);
+        assert_eq!(ind.genome.network.nrows(), TEST_GENOME_SIZE);
+        assert_eq!(ind.genome.network.ncols(), TEST_GENOME_SIZE);
+        assert_eq!(ind.genome.size(), TEST_GENOME_SIZE);
+        assert_eq!(ind.state.len(), TEST_GENOME_SIZE);
+    }
+
+    #[test]
+    fn test_rectify() {
         use super::Individual;
         use nalgebra::dvector;
 
@@ -97,8 +117,8 @@ mod tests {
         genome = genome.mutate_addnode();
         genome = genome.mutate_addnode();
         let mut ind: Individual = Individual::from_genome(genome);
-        ind.state = dvector![-1.0, -1.0, -1.0, 1.0, -1.0, -1.0];
+        ind.state = dvector![-2.0, -3.0, -4.0, 5.0, -6.0, -7.0];
         ind.rectify();
-        assert_eq!(ind.state, dvector![-1.0, -1.0, 0.0, 1.0, 0.0, -1.0]);
+        assert_eq!(ind.state, dvector![-2.0, -3.0, 0.0, 5.0, 0.0, -7.0]);
     }
 }
