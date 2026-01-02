@@ -46,6 +46,6 @@ fn main() {
     };
 
     for _generation in 0..NUM_GENERATIONS {
-        let test_data = pop = pop.reproduce(&xor_test_inputs);
+        let test_data = pop = pop.reproduce(&xor_test_inputs, N_FITTEST_REPRODUCE);
     }
 }

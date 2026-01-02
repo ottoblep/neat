@@ -33,14 +33,14 @@ impl Population {
             .collect()
     }
 
-    pub fn reproduce<const N_FITTEST_REPROD: usize>(&mut self, test_data: &TestSet) -> Population {
+    pub fn reproduce(&mut self, test_data: &TestSet, n_fittest_reprod: usize) -> Population {
         let mut order = self.sort_by_fitness(test_data);
         let mut rng = rand::rng();
         Population {
             pops: order
                 .drain(..)
                 .map(|i| self.pops[i].clone())
-                .take(N_FITTEST_REPROD)
+                .take(n_fittest_reprod)
                 .map(|ind| ind.reproduce(&mut rng))
                 .collect(),
         }
