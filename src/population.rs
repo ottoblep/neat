@@ -14,6 +14,11 @@ impl PopulationStats {
     }
 }
 
+struct EvaluationResult {
+    sorted_idxs: Vec<usize>,
+    population_stats: PopulationStats,
+}
+
 pub struct Population {
     pops: Vec<Individual>,
 }
@@ -26,7 +31,7 @@ impl Population {
         }
     }
 
-    fn get_sorted_idxs_by_fitness(&mut self, test_data: &TestSet) -> (Vec<usize>, PopulationStats) {
+    fn evaluate(&mut self, test_data: &TestSet) -> EvaluationResult {
         let mut indexed_fitness: Vec<(usize, f32)> = self
             .pops
             .iter_mut()
@@ -54,14 +59,14 @@ impl Population {
             .map(|(i_a, _): (usize, f32)| i_a)
             .collect();
 
-        (
-            sorted_idxs,
-            PopulationStats {
+        EvaluationResult {
+            sorted_idxs: sorted_idxs,
+            population_stats: PopulationStats {
                 average_fitness,
                 best_fitness,
                 average_genome_size: self.average_genome_size(),
             },
-        )
+        }
     }
 
     pub fn average_genome_size(&self) -> f32 {
@@ -74,18 +79,19 @@ impl Population {
         test_data: &TestSet,
         n_fittest_reprod: usize,
     ) -> (Population, PopulationStats) {
-        let (sorted_idxs, population_stats) = self.get_sorted_idxs_by_fitness(test_data);
+        let eval_result: EvaluationResult = self.evaluate(test_data);
         let mut rng = rand::rng();
         (
             Population {
-                pops: sorted_idxs
+                pops: eval_result
+                    .sorted_idxs
                     .iter()
                     .map(|i: &usize| self.pops[*i].clone())
                     .take(n_fittest_reprod)
                     .map(|ind| ind.reproduce(&mut rng))
                     .collect(),
             },
-            population_stats,
+            eval_result.population_stats,
         )
     }
 
