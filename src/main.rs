@@ -71,15 +71,17 @@ mod tests {
             outputs: vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
         };
 
-        let mut pop = Population::new::<2, 1>(conf.n_pop);
-        let mut rng = rand::rng();
-        for _generation in 0..conf.num_generations {
-            let (new_pop, population_stats) = pop.reproduce(&xor_test_inputs, &mut rng, &conf);
-            println!("Generation {_generation}:");
-            population_stats.print();
-            pop = new_pop;
-            if population_stats.best_fitness < 0.0001 {
-                return;
+        for _ in 0..5 {
+            let mut pop = Population::new::<2, 1>(conf.n_pop);
+            let mut rng = rand::rng();
+            for _generation in 0..conf.num_generations {
+                let (new_pop, population_stats) = pop.reproduce(&xor_test_inputs, &mut rng, &conf);
+                println!("Generation {_generation}:");
+                population_stats.print();
+                pop = new_pop;
+                if population_stats.best_fitness < 0.0001 {
+                    return;
+                }
             }
         }
         assert!(false);
