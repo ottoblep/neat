@@ -3,9 +3,9 @@ use crate::genome::Genome;
 use nalgebra::DVector;
 use rand::Rng;
 
-const EDGE_MUT_CHANCE: u32 = 50;
+const EDGE_MUT_CHANCE: u32 = 80;
 const EDGE_MUT_STRENGTH: f32 = 0.1;
-const NODE_MUT_CHANCE: u32 = 20;
+const NODE_MUT_CHANCE: u32 = 1;
 const STEADY_STATE_EVAL_STEPS_MULTIPLIER: usize = 2;
 
 #[derive(Clone)]

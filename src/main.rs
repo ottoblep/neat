@@ -6,7 +6,7 @@ mod population;
 use data::TestSet;
 use nalgebra::dvector;
 
-const NUM_GENERATIONS: usize = 100;
+const NUM_GENERATIONS: usize = 1000;
 const N_POP: usize = 100;
 const N_FITTEST_REPRODUCE: usize = 20;
 
