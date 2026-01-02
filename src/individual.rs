@@ -155,8 +155,8 @@ mod tests {
         let mut genome = super::Genome::new::<2, 1>();
         let mut ind: Individual = Individual::from_genome(genome.clone());
         let fitness_before: f32 = ind.test_steady_state(&xor_test_inputs, &test_config);
-        genome = genome.mutate_addnode();
-        let mut ind2: Individual = Individual::from_genome(genome.clone());
+        let genome_mut = genome.mutate_addnode();
+        let mut ind2: Individual = Individual::from_genome(genome_mut);
         let fitness_after: f32 = ind2.test_steady_state(&xor_test_inputs, &test_config);
         assert_eq!(fitness_before, fitness_after);
     }
