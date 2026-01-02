@@ -1,12 +1,8 @@
+use crate::config::CONFIG;
 use crate::data::TestSet;
 use crate::genome::Genome;
 use nalgebra::DVector;
 use rand::Rng;
-
-const EDGE_MUT_CHANCE: u32 = 80;
-const EDGE_MUT_STRENGTH: f32 = 0.1;
-const NODE_MUT_CHANCE: u32 = 1;
-const STEADY_STATE_EVAL_STEPS_MULTIPLIER: usize = 2;
 
 #[derive(Clone)]
 pub struct Individual {
@@ -54,7 +50,7 @@ impl Individual {
     }
 
     fn eval_steady_state(&mut self, inputs: &DVector<f32>) -> DVector<f32> {
-        for _ in 1..STEADY_STATE_EVAL_STEPS_MULTIPLIER * self.genome.size() {
+        for _ in 1..CONFIG.steady_state_eval_steps_multiplier * self.genome.size() {
             self.evaluate(inputs);
         }
         self.evaluate(inputs).into()
@@ -85,10 +81,10 @@ impl Individual {
     #[must_use]
     pub fn reproduce<RNG: Rng>(&self, rng_dev: &mut RNG) -> Individual {
         let mut genome = self.genome.clone();
-        if rng_dev.random_range(0..100) < EDGE_MUT_CHANCE {
-            genome = genome.mutate_edge(EDGE_MUT_STRENGTH);
+        if rng_dev.random_range(0..100) < CONFIG.edge_mut_chance {
+            genome = genome.mutate_edge(CONFIG.edge_mut_strength);
         }
-        if rng_dev.random_range(0..100) < NODE_MUT_CHANCE {
+        if rng_dev.random_range(0..100) < CONFIG.node_mut_chance {
             genome = genome.mutate_addnode();
         }
         Individual::from_genome(genome)
