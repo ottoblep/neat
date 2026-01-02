@@ -45,4 +45,15 @@ impl Population {
                 .collect(),
         }
     }
+
+    pub fn expand(&mut self, target_size: usize) {
+        self.pops
+            .clone()
+            .iter()
+            .cycle()
+            .take(target_size - self.pops.len())
+            .for_each(|ind| {
+                self.pops.push(ind.clone());
+            });
+    }
 }

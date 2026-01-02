@@ -8,6 +8,7 @@ use data::TestSet;
 use nalgebra::dvector;
 
 const NUM_GENERATIONS: usize = 100;
+const N_POP: usize = 100;
 const N_FITTEST_REPRODUCE: usize = 20;
 
 #[derive(Parser, Debug)]
@@ -33,7 +34,7 @@ fn main() {
         args.name.unwrap_or("world".to_string())
     );
 
-    let mut pop = population::Population::new::<2, 1, 100>();
+    let mut pop = population::Population::new::<2, 1, N_POP>();
 
     let xor_test_inputs: TestSet = TestSet {
         inputs: vec![
@@ -47,5 +48,6 @@ fn main() {
 
     for _generation in 0..NUM_GENERATIONS {
         pop = pop.reproduce(&xor_test_inputs, N_FITTEST_REPRODUCE);
+        pop.expand(N_POP)
     }
 }
