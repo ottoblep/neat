@@ -1,6 +1,6 @@
 use crate::data::TestSet;
 use crate::genome::Genome;
-use nalgebra::{DVector, DVectorView};
+use nalgebra::DVector;
 use rand::Rng;
 
 const EDGE_MUT_CHANCE: u32 = 50;
