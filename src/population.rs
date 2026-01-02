@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::config::Config;
 use crate::data::TestSet;
 use crate::genome::Genome;
@@ -98,17 +100,17 @@ impl Population {
     pub fn reproduce(
         &mut self,
         test_data: &TestSet,
+        rng_dev: &mut impl Rng,
         conf: &Config,
     ) -> (Population, PopulationStats) {
         let eval_result: EvaluationResult = self.evaluate(test_data, conf);
-        let mut rng = rand::rng();
         let mut pop = Population {
             pops: eval_result
                 .sorted_idxs
                 .iter()
                 .map(|i: &usize| self.pops[*i].clone())
                 .take(conf.n_fittest_reproduce)
-                .map(|ind| ind.reproduce(&mut rng, conf))
+                .map(|ind| ind.reproduce(rng_dev, conf))
                 .collect(),
         };
         pop.expand(self.pops.len());

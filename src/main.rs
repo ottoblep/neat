@@ -33,10 +33,10 @@ fn main() {
             dvector![-120.0],
         ],
     };
-
+    let mut rng = rand::rng();
     let mut pop = Population::new::<2, 1>(conf.n_pop);
     for _generation in 0..conf.num_generations {
-        let (new_pop, population_stats) = pop.reproduce(&xor_test_inputs, &conf);
+        let (new_pop, population_stats) = pop.reproduce(&xor_test_inputs, &mut rng, &conf);
         println!("Generation {_generation}:");
         population_stats.print();
         pop = new_pop;
@@ -72,8 +72,9 @@ mod tests {
         };
 
         let mut pop = Population::new::<2, 1>(conf.n_pop);
+        let mut rng = rand::rng();
         for _generation in 0..conf.num_generations {
-            let (new_pop, population_stats) = pop.reproduce(&xor_test_inputs, &conf);
+            let (new_pop, population_stats) = pop.reproduce(&xor_test_inputs, &mut rng, &conf);
             println!("Generation {_generation}:");
             population_stats.print();
             pop = new_pop;
