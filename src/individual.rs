@@ -29,20 +29,22 @@ impl Individual {
         }
     }
 
-    fn evaluate(&mut self, inputs: &DVector<f32>) -> DVectorView<f32> {
+    fn evaluate(&mut self, inputs: &DVector<f32>) -> DVector<f32> {
         assert!(inputs.len() == self.genome.n_in);
         for i in 0..inputs.len() {
             self.state[i] = inputs[i];
         }
         self.state = &self.genome.network * &self.state;
-        self.state.rows(self.genome.n_in + 1, self.genome.n_out)
+        self.state
+            .rows(self.genome.n_in + 1, self.genome.n_out)
+            .into()
     }
 
-    fn eval_steady_state(&mut self, inputs: &DVector<f32>) -> DVectorView<f32> {
+    fn eval_steady_state(&mut self, inputs: &DVector<f32>) -> DVector<f32> {
         for _ in 1..STEADY_STATE_EVAL_STEPS_MULTIPLIER * self.genome.size() {
             self.evaluate(inputs);
         }
-        self.evaluate(inputs)
+        self.evaluate(inputs).into()
     }
 
     pub fn test_steady_state(&mut self, test_data: &TestSet) -> f32 {
