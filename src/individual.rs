@@ -1,4 +1,4 @@
-use crate::config::{CONFIG, Config};
+use crate::config::Config;
 use crate::data::TestSet;
 use crate::genome::Genome;
 use nalgebra::DVector;
