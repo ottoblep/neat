@@ -39,6 +39,10 @@ impl Genome {
         self.network.nrows()
     }
 
+    pub fn nodes(&self) -> usize {
+        self.network.nrows() - self.n_in - self.n_out
+    }
+
     fn random_idx(&self) -> (usize, usize) {
         let i = rand::random::<u64>() % self.network.nrows() as u64;
         let j = rand::random::<u64>() % self.network.ncols() as u64;

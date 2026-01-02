@@ -29,12 +29,25 @@ impl Individual {
         }
     }
 
+    fn rectify(&mut self) {
+        self.state
+            .iter_mut()
+            .skip(self.genome.n_in)
+            .take(self.genome.nodes())
+            .for_each(|state: &mut f32| {
+                if *state < 0.0 {
+                    *state = 0.0;
+                }
+            });
+    }
+
     fn evaluate(&mut self, inputs: &DVector<f32>) -> DVector<f32> {
         assert!(inputs.len() == self.genome.n_in);
         for i in 0..inputs.len() {
             self.state[i] = inputs[i];
         }
         self.state = &self.genome.network * &self.state;
+        self.rectify();
         self.state
             .rows(self.genome.n_in + 1, self.genome.n_out)
             .into()
