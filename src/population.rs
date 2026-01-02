@@ -1,7 +1,7 @@
 use crate::data::TestSet;
 use crate::individual::Individual;
 
-const N_POP_REPROD: usize = 50;
+const N_FITTEST_REPROD: usize = 50;
 
 pub struct Population {
     pops: Vec<Individual>,
@@ -33,14 +33,14 @@ impl Population {
             .collect()
     }
 
-    pub fn reproduce<const N_POP_REPROD: usize>(&mut self, test_data: &TestSet) -> Population {
+    pub fn reproduce<const N_FITTEST_REPROD: usize>(&mut self, test_data: &TestSet) -> Population {
         let mut order = self.sort_by_fitness(test_data);
         let mut rng = rand::rng();
         Population {
             pops: order
                 .drain(..)
                 .map(|i| self.pops[i].clone())
-                .take(N_POP_REPROD)
+                .take(N_FITTEST_REPROD)
                 .map(|ind| ind.reproduce(&mut rng))
                 .collect(),
         }

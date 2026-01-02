@@ -4,8 +4,11 @@ mod individual;
 mod population;
 
 use clap::Parser;
+use data::TestSet;
+use nalgebra::dvector;
 
 const NUM_GENERATIONS: usize = 100;
+const N_FITTEST_REPRODUCE: usize = 20;
 
 #[derive(Parser, Debug)]
 #[clap(author = "", version, about)]
@@ -32,7 +35,17 @@ fn main() {
 
     let mut pop = population::Population::new::<2, 1, 100>();
 
+    let xor_test_inputs: TestSet = TestSet {
+        inputs: vec![
+            dvector![0.0, 0.0],
+            dvector![0.0, 1.0],
+            dvector![1.0, 0.0],
+            dvector![1.0, 1.0],
+        ],
+        outputs: vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
+    };
+
     for _generation in 0..NUM_GENERATIONS {
-        let test_data = pop = pop.reproduce(&test_data);
+        let test_data = pop = pop.reproduce(&xor_test_inputs);
     }
 }
