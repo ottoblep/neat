@@ -9,7 +9,7 @@ fn main() {}
 #[cfg(test)]
 mod tests {
     #[test]
-    fn test_main() {
+    fn sample_main() {
         use crate::config::Config;
         use crate::data::TestSet;
         use crate::population::Population;
