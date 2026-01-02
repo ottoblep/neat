@@ -58,6 +58,10 @@ impl Individual {
         self.evaluate(inputs).into()
     }
 
+    pub fn genome_size(&self) -> usize {
+        self.genome.size()
+    }
+
     pub fn test_steady_state(&mut self, test_data: &TestSet) -> f32 {
         test_data
             .inputs

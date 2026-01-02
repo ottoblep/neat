@@ -31,6 +31,11 @@ impl Population {
             .collect()
     }
 
+    pub fn average_genome_size(&self) -> f32 {
+        let total_size: usize = self.pops.iter().map(|ind| ind.genome_size()).sum();
+        total_size as f32 / self.pops.len() as f32
+    }
+
     pub fn reproduce(&mut self, test_data: &TestSet, n_fittest_reprod: usize) -> Population {
         let mut order = self.sort_by_fitness(test_data);
         let mut rng = rand::rng();

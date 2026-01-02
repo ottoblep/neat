@@ -48,6 +48,9 @@ fn main() {
 
     for _generation in 0..NUM_GENERATIONS {
         pop = pop.reproduce(&xor_test_inputs, N_FITTEST_REPRODUCE);
+        println!("Generation {_generation}:");
+        println!("  Average size: {}", pop.average_genome_size());
+
         pop.expand(N_POP)
     }
 }
