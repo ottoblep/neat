@@ -87,9 +87,6 @@ impl Individual {
         if rng_dev.random_range(0..100) < conf.node_mut_chance {
             genome = genome.mutate_addnode(rng_dev);
         }
-        if rng_dev.random_range(0..100) < conf.prune_mut_chance {
-            genome = genome.mutate_removenode(rng_dev);
-        }
         Individual::from_genome(genome)
     }
 }
@@ -155,7 +152,6 @@ mod tests {
             edge_mut_chance: 80,
             edge_mut_strength: 0.1,
             node_mut_chance: 5,
-            prune_mut_chance: 1,
             steady_state_eval_steps_multiplier: 2,
         };
         let mut rng = rand::rng();

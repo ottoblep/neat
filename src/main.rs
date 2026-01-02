@@ -17,7 +17,6 @@ fn main() {
         edge_mut_chance: 90,
         edge_mut_strength: 0.1,
         node_mut_chance: 60,
-        prune_mut_chance: 10,
         steady_state_eval_steps_multiplier: 2,
     };
     let xor_test_inputs: TestSet = TestSet {
@@ -60,7 +59,6 @@ mod tests {
             edge_mut_chance: 80,
             edge_mut_strength: 0.1,
             node_mut_chance: 1,
-            prune_mut_chance: 0,
             steady_state_eval_steps_multiplier: 2,
         };
         let xor_test_inputs: TestSet = TestSet {
