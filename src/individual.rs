@@ -48,9 +48,7 @@ impl Individual {
         }
         self.state = &self.genome.network * &self.state;
         self.rectify();
-        self.state
-            .rows(self.genome.n_in + 1, self.genome.n_out)
-            .into()
+        self.state.rows(self.genome.n_in, self.genome.n_out).into()
     }
 
     fn eval_steady_state(&mut self, inputs: &DVector<f32>) -> DVector<f32> {
