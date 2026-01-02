@@ -17,6 +17,13 @@ impl Genome {
     }
 
     #[must_use]
+    fn random_idx(&self) -> (usize, usize) {
+        let i = rand::random::<u64>() % self.network.nrows() as u64;
+        let j = rand::random::<u64>() % self.network.ncols() as u64;
+        (i as usize, j as usize)
+    }
+
+    #[must_use]
     pub fn mutate_edge(&mut self, strength: f32) -> Genome {
         let mut new = self.clone();
         let (i, j) = self.random_idx();
@@ -48,10 +55,13 @@ impl Genome {
         self.network.nrows() - self.n_in - self.n_out
     }
 
-    #[must_use]
-    fn random_idx(&self) -> (usize, usize) {
-        let i = rand::random::<u64>() % self.network.nrows() as u64;
-        let j = rand::random::<u64>() % self.network.ncols() as u64;
-        (i as usize, j as usize)
+    pub fn print(&self) {
+        println!("  Network weights:");
+        for col in 0..self.network.ncols() {
+            for row in 0..self.network.nrows() {
+                print!("{:>8.3} ", self.network[(row, col)]);
+            }
+            println!();
+        }
     }
 }

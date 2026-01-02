@@ -1,16 +1,20 @@
 use crate::data::TestSet;
+use crate::genome::Genome;
 use crate::individual::Individual;
 
 pub struct PopulationStats {
     average_fitness: f32,
     best_fitness: f32,
     average_genome_size: f32,
+    best_genome: Genome,
 }
 impl PopulationStats {
     pub fn print(&self) {
         println!("  Average fitness: {}", self.average_fitness);
         println!("  Best fitness: {}", self.best_fitness);
         println!("  Average genome size: {}", self.average_genome_size);
+        println!("  Best Network");
+        self.best_genome.print();
     }
 }
 
@@ -56,18 +60,19 @@ impl Population {
             a.partial_cmp(&b).unwrap_or(std::cmp::Ordering::Equal)
         });
 
-        let sorted_idxs = indexed_fitness
+        let sorted_idxs: Vec<usize> = indexed_fitness
             .drain(..)
             .map(|(i_a, _): (usize, f32)| i_a)
             .collect();
 
         EvaluationResult {
-            sorted_idxs: sorted_idxs,
             population_stats: PopulationStats {
+                best_genome: self.pops[sorted_idxs[0]].get_genome().clone(),
                 average_fitness,
                 best_fitness,
                 average_genome_size: self.average_genome_size(),
             },
+            sorted_idxs: sorted_idxs,
         }
     }
 

@@ -66,6 +66,11 @@ impl Individual {
     }
 
     #[must_use]
+    pub fn get_genome(&self) -> &Genome {
+        &self.genome
+    }
+
+    #[must_use]
     pub fn test_steady_state(&mut self, test_data: &TestSet) -> f32 {
         test_data
             .inputs
