@@ -34,8 +34,6 @@ fn main() {
         args.name.unwrap_or("world".to_string())
     );
 
-    let mut pop = population::Population::new::<2, 1, N_POP>();
-
     let xor_test_inputs: TestSet = TestSet {
         inputs: vec![
             dvector![0.0, 0.0],
@@ -46,11 +44,12 @@ fn main() {
         outputs: vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
     };
 
+    let mut pop = population::Population::new::<2, 1, N_POP>();
     for _generation in 0..NUM_GENERATIONS {
-        pop = pop.reproduce(&xor_test_inputs, N_FITTEST_REPRODUCE);
+        let (mut new_pop, population_stats) = pop.reproduce(&xor_test_inputs, N_FITTEST_REPRODUCE);
         println!("Generation {_generation}:");
-        println!("  Average size: {}", pop.average_genome_size());
-
-        pop.expand(N_POP)
+        population_stats.print();
+        new_pop.expand(N_POP);
+        pop = new_pop;
     }
 }
