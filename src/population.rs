@@ -50,7 +50,7 @@ impl Population {
         let best_fitness: f32 = indexed_fitness
             .iter()
             .map(|(_, fit): &(usize, f32)| *fit)
-            .fold(f32::MIN, |a, b| a.max(b));
+            .fold(f32::MAX, |a, b| a.min(b));
 
         indexed_fitness.sort_unstable_by(|(_, a): &(usize, f32), (_, b): &(usize, f32)| {
             a.partial_cmp(&b).unwrap_or(std::cmp::Ordering::Equal)
