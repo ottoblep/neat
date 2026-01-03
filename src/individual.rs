@@ -95,11 +95,12 @@ impl Individual {
 
 #[cfg(test)]
 mod tests {
+    use super::Individual;
     use crate::{config::Config, data::TestSet};
+    use nalgebra::dvector;
 
     #[test]
     fn test_from_genome() {
-        use super::Individual;
         const TEST_IN: usize = 4;
         const TEST_OUT: usize = 2;
         const TEST_GENOME_SIZE: usize = 8;
@@ -120,9 +121,6 @@ mod tests {
 
     #[test]
     fn test_rectify() {
-        use super::Individual;
-        use nalgebra::dvector;
-
         let mut genome = super::Genome::new::<2, 1>();
         let mut rng = rand::rng();
         genome = genome.mutate_addnode(&mut rng);
@@ -136,8 +134,6 @@ mod tests {
 
     #[test]
     fn test_nondestructive_addnode() {
-        use super::Individual;
-        use nalgebra::dvector;
         let xor_test_inputs: TestSet = TestSet::new(
             vec![
                 dvector![0.0, 0.0],

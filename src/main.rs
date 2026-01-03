@@ -26,7 +26,7 @@ fn main() {
         n_pop: 1000,
         n_fittest_reproduce: 600,
         edge_mut_chance: 70,
-        edge_mut_strength: 0.05,
+        edge_mut_strength: 0.1,
         node_mut_chance: 2,
         steady_state_eval_steps_multiplier: 1,
     };
