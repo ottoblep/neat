@@ -4,12 +4,23 @@ mod genome;
 mod individual;
 mod population;
 
-fn main() {
-    use crate::config::Config;
-    use crate::data::TestSet;
-    use crate::population::Population;
-    use nalgebra::dvector;
+use crate::config::Config;
+use crate::data::TestSet;
+use crate::population::Population;
+use rand::Rng;
 
+fn run_algorithm(data: &TestSet, conf: &Config, rng_dev: &mut impl Rng) {
+    let mut pop = Population::new::<2, 1>(conf.n_pop);
+    for _generation in 0..conf.num_generations {
+        let (new_pop, population_stats) = pop.reproduce(&data, rng_dev, &conf);
+        println!("Generation {_generation}:");
+        population_stats.print();
+        pop = new_pop;
+    }
+}
+
+fn main() {
+    let mut rng = rand::rng();
     let conf: Config = Config {
         num_generations: 6000,
         n_pop: 1000,
@@ -19,24 +30,14 @@ fn main() {
         node_mut_chance: 2,
         steady_state_eval_steps_multiplier: 1,
     };
-    let multiplication_test_inputs: TestSet = TestSet::new(
-        vec![
-            dvector![1.0, 2.0],
-            dvector![2.0, 3.0],
-            dvector![0.5, 2.0],
-            dvector![0.3, 0.1],
-        ],
-        vec![dvector![2.0], dvector![6.0], dvector![1.0], dvector![0.03]],
+    let generated_test_data = TestSet::generate(
+        |input: [f32; 2]| -> [f32; 1] { [input[0] * input[1]] },
+        20,
+        -1.0..1.0,
+        &mut rng,
     );
-    let mut rng = rand::rng();
-    let mut pop = Population::new::<2, 1>(conf.n_pop);
-    for _generation in 0..conf.num_generations {
-        let (new_pop, population_stats) =
-            pop.reproduce(&multiplication_test_inputs, &mut rng, &conf);
-        println!("Generation {_generation}:");
-        population_stats.print();
-        pop = new_pop;
-    }
+    generated_test_data.print();
+    run_algorithm(&generated_test_data, &conf, &mut rng);
 }
 
 #[cfg(test)]
