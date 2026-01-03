@@ -89,6 +89,9 @@ impl Individual {
         if rng_dev.random_range(0..100) < conf.node_mut_chance {
             genome = genome.mutate_addnode(rng_dev);
         }
+        if rng_dev.random_range(0..100) < conf.node_mut_chance {
+            genome = genome.mutate_removenode(rng_dev);
+        }
         Individual::from_genome(genome)
     }
 }

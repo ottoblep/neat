@@ -47,6 +47,19 @@ impl Genome {
     }
 
     #[must_use]
+    pub fn mutate_removenode(&mut self, rng_dev: &mut impl Rng) -> Genome {
+        if self.nodes() <= 0 {
+            return self.clone();
+        }
+
+        let mut new = self.clone();
+        let (i, _) = new.random_idx(rng_dev);
+        new.network = new.network.remove_row(i);
+        new.network = new.network.remove_column(i);
+        new
+    }
+
+    #[must_use]
     pub fn size(&self) -> usize {
         self.network.nrows()
     }
