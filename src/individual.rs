@@ -4,7 +4,7 @@ use nalgebra::DVector;
 use rand::Rng;
 
 pub trait Environment {
-    fn observe(&self) -> DVector<f32>;
+    fn observe(&self) -> &DVector<f32>;
     // The individual acts until the environment returns a final result
     fn act(&mut self, input: &DVector<f32>) -> Option<f32>;
 }
@@ -44,6 +44,7 @@ impl Individual {
             });
     }
 
+    #[must_use]
     fn step(&mut self, inputs: &DVector<f32>) -> DVector<f32> {
         assert!(inputs.len() == self.genome.n_in);
         for i in 0..inputs.len() {
@@ -54,9 +55,10 @@ impl Individual {
         self.state.rows(self.genome.n_in, self.genome.n_out).into()
     }
 
-    fn evaluate(&mut self, env: &mut impl Environment) -> f32 {
+    #[must_use]
+    pub fn evaluate(&mut self, env: &mut impl Environment) -> f32 {
         loop {
-            let input: DVector<f32> = env.observe();
+            let input: &DVector<f32> = env.observe();
             let output: DVector<f32> = self.step(&input);
             match env.act(&output) {
                 Some(r) => return r,
@@ -96,7 +98,7 @@ impl Individual {
 #[cfg(test)]
 mod tests {
     use super::Individual;
-    use crate::{config::Config, data::TestSet};
+    use crate::data::TestSet;
     use nalgebra::dvector;
 
     #[test]
@@ -134,6 +136,7 @@ mod tests {
 
     #[test]
     fn test_nondestructive_addnode() {
+        use crate::environment::eval_steady_state;
         let xor_test_inputs: TestSet = TestSet::new(
             vec![
                 dvector![0.0, 0.0],
@@ -143,22 +146,13 @@ mod tests {
             ],
             vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
         );
-        let test_config: Config = Config {
-            num_generations: 100,
-            n_pop: 50,
-            n_fittest_reproduce: 10,
-            edge_mut_chance: 80,
-            edge_mut_strength: 0.1,
-            node_mut_chance: 5,
-            steady_state_eval_steps_multiplier: 2,
-        };
         let mut rng = rand::rng();
         let mut genome = super::Genome::new::<2, 1>();
         let mut ind: Individual = Individual::from_genome(genome.clone());
-        let fitness_before: f32 = ind.test_steady_state(&xor_test_inputs, &test_config);
+        let fitness_before: f32 = eval_steady_state(&mut ind, &xor_test_inputs, 20);
         let genome_mut = genome.mutate_addnode(&mut rng);
         let mut ind2: Individual = Individual::from_genome(genome_mut);
-        let fitness_after: f32 = ind2.test_steady_state(&xor_test_inputs, &test_config);
+        let fitness_after: f32 = eval_steady_state(&mut ind2, &xor_test_inputs, 20);
         assert_eq!(fitness_before, fitness_after);
     }
 }

@@ -5,5 +5,5 @@ pub struct Config {
     pub edge_mut_chance: u32,
     pub edge_mut_strength: f32,
     pub node_mut_chance: u32,
-    pub steady_state_eval_steps_multiplier: usize,
+    pub steady_state_steps: usize,
 }

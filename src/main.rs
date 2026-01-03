@@ -1,5 +1,6 @@
 mod config;
 mod data;
+mod environment;
 mod genome;
 mod individual;
 mod population;
@@ -28,7 +29,7 @@ fn main() {
         edge_mut_chance: 70,
         edge_mut_strength: 0.1,
         node_mut_chance: 2,
-        steady_state_eval_steps_multiplier: 1,
+        steady_state_steps: 20,
     };
     let generated_test_data = TestSet::generate(
         |input: [f32; 2]| -> [f32; 1] { [input[0] * input[1]] },
@@ -56,7 +57,7 @@ mod tests {
             edge_mut_chance: 80,
             edge_mut_strength: 0.1,
             node_mut_chance: 1,
-            steady_state_eval_steps_multiplier: 2,
+            steady_state_steps: 20,
         };
         let xor_test_inputs: TestSet = TestSet::new(
             vec![

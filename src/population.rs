@@ -4,6 +4,7 @@ use rayon::iter::ParallelIterator;
 
 use crate::config::Config;
 use crate::data::TestSet;
+use crate::environment::eval_steady_state;
 use crate::genome::Genome;
 use crate::individual::Individual;
 
@@ -45,7 +46,16 @@ impl Population {
     fn evaluate(&mut self, test_data: &TestSet, conf: &Config) -> EvaluationResult {
         let mut indexed_fitness: Vec<(usize, f32)> = (0..self.pops.len())
             .into_par_iter()
-            .map(|i: usize| (i, self.pops[i].clone().test_steady_state(test_data, conf)))
+            .map(|i: usize| {
+                (
+                    i,
+                    eval_steady_state(
+                        &mut self.pops[i].clone(),
+                        test_data,
+                        conf.steady_state_steps,
+                    ),
+                )
+            })
             .collect();
 
         let average_fitness: f32 = indexed_fitness
