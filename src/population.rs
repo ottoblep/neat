@@ -1,4 +1,7 @@
 use rand::Rng;
+use rayon::iter::IndexedParallelIterator;
+use rayon::iter::IntoParallelIterator;
+use rayon::iter::ParallelIterator;
 
 use crate::config::Config;
 use crate::data::TestSet;
@@ -41,11 +44,9 @@ impl Population {
 
     #[must_use]
     fn evaluate(&mut self, test_data: &TestSet, conf: &Config) -> EvaluationResult {
-        let mut indexed_fitness: Vec<(usize, f32)> = self
-            .pops
-            .iter_mut()
-            .map(|pop: &mut Individual| pop.test_steady_state(test_data, conf))
-            .enumerate()
+        let mut indexed_fitness: Vec<(usize, f32)> = (0..self.pops.len())
+            .into_par_iter()
+            .map(|i: usize| (i, self.pops[i].clone().test_steady_state(test_data, conf)))
             .collect();
 
         let average_fitness: f32 = indexed_fitness
