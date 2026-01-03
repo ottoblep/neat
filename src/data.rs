@@ -20,3 +20,6 @@ impl TestSet {
         &self.outputs
     }
 }
+
+// TODO: Auto generate dataset from function closure
+// TODO: normalize data or adjust error calculation to weight evenly
