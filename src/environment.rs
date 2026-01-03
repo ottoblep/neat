@@ -1,7 +1,12 @@
 use crate::data::TestSet;
-use crate::individual::Environment;
 use crate::individual::Individual;
 use nalgebra::DVector;
+
+pub trait Environment {
+    fn observe(&self) -> &DVector<f32>;
+    // The individual acts until the environment returns a final result
+    fn act(&mut self, input: &DVector<f32>) -> Option<f32>;
+}
 
 struct SteadyStateEnv {
     input: DVector<f32>,

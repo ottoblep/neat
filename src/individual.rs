@@ -1,13 +1,8 @@
 use crate::config::Config;
+use crate::environment::Environment;
 use crate::genome::Genome;
 use nalgebra::DVector;
 use rand::Rng;
-
-pub trait Environment {
-    fn observe(&self) -> &DVector<f32>;
-    // The individual acts until the environment returns a final result
-    fn act(&mut self, input: &DVector<f32>) -> Option<f32>;
-}
 
 #[derive(Clone)]
 pub struct Individual {
