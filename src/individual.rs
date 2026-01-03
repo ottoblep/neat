@@ -81,8 +81,10 @@ impl Individual {
     #[must_use]
     pub fn reproduce(&self, rng_dev: &mut impl Rng, conf: &Config) -> Individual {
         let mut genome = self.genome.clone();
-        if rng_dev.random_range(0..100) < conf.edge_mut_chance {
-            genome = genome.mutate_edge(conf.edge_mut_strength, rng_dev);
+        for _ in 0..self.genome.size() {
+            if rng_dev.random_range(0..100) < conf.edge_mut_chance {
+                genome = genome.mutate_edge(conf.edge_mut_strength, rng_dev);
+            }
         }
         if rng_dev.random_range(0..100) < conf.node_mut_chance {
             genome = genome.mutate_addnode(rng_dev);
