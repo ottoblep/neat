@@ -1,8 +1,13 @@
 use crate::config::Config;
-use crate::data::TestSet;
 use crate::genome::Genome;
 use nalgebra::DVector;
 use rand::Rng;
+
+pub trait Environment {
+    fn observe(&self) -> DVector<f32>;
+    // The individual acts until the environment returns a final result
+    fn act(&mut self, input: &DVector<f32>) -> Option<f32>;
+}
 
 #[derive(Clone)]
 pub struct Individual {
@@ -39,7 +44,7 @@ impl Individual {
             });
     }
 
-    fn evaluate(&mut self, inputs: &DVector<f32>) -> DVector<f32> {
+    fn step(&mut self, inputs: &DVector<f32>) -> DVector<f32> {
         assert!(inputs.len() == self.genome.n_in);
         for i in 0..inputs.len() {
             self.state[i] = inputs[i];
@@ -49,33 +54,15 @@ impl Individual {
         self.state.rows(self.genome.n_in, self.genome.n_out).into()
     }
 
-    fn eval_steady_state(&mut self, inputs: &DVector<f32>, conf: &Config) -> DVector<f32> {
-        for _ in 1..conf.steady_state_eval_steps_multiplier * self.genome.size() {
-            self.evaluate(inputs);
+    fn evaluate(&mut self, env: &mut impl Environment) -> f32 {
+        loop {
+            let input: DVector<f32> = env.observe();
+            let output: DVector<f32> = self.step(&input);
+            match env.act(&output) {
+                Some(r) => return r,
+                None => continue,
+            }
         }
-        self.evaluate(inputs).into()
-    }
-
-    #[must_use]
-    pub fn genome_size(&self) -> usize {
-        self.genome.size()
-    }
-
-    #[must_use]
-    pub fn get_genome(&self) -> &Genome {
-        &self.genome
-    }
-
-    #[must_use]
-    pub fn test_steady_state(&mut self, test_data: &TestSet, conf: &Config) -> f32 {
-        test_data
-            .get_inputs()
-            .iter()
-            .zip(test_data.get_outputs().iter())
-            .map(|(input, output)| -> f32 {
-                (self.eval_steady_state(input, conf) - output).norm_squared()
-            })
-            .sum()
     }
 
     #[must_use]
@@ -93,6 +80,16 @@ impl Individual {
             genome = genome.mutate_removenode(rng_dev);
         }
         Individual::from_genome(genome)
+    }
+
+    #[must_use]
+    pub fn genome_size(&self) -> usize {
+        self.genome.size()
+    }
+
+    #[must_use]
+    pub fn get_genome(&self) -> &Genome {
+        &self.genome
     }
 }
 
