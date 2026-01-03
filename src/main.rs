@@ -12,26 +12,21 @@ fn main() {
 
     let conf: Config = Config {
         num_generations: 6000,
-        n_pop: 500,
-        n_fittest_reproduce: 100,
-        edge_mut_chance: 90,
-        edge_mut_strength: 0.1,
-        node_mut_chance: 60,
-        steady_state_eval_steps_multiplier: 2,
+        n_pop: 1000,
+        n_fittest_reproduce: 600,
+        edge_mut_chance: 70,
+        edge_mut_strength: 0.05,
+        node_mut_chance: 2,
+        steady_state_eval_steps_multiplier: 1,
     };
     let multiplication_test_inputs: TestSet = TestSet::new(
         vec![
             dvector![1.0, 2.0],
-            dvector![5.0, 6.0],
-            dvector![-3.0, 8.0],
-            dvector![-12.0, 10.0],
+            dvector![2.0, 3.0],
+            dvector![0.5, 2.0],
+            dvector![0.3, 0.1],
         ],
-        vec![
-            dvector![2.0],
-            dvector![30.0],
-            dvector![-24.0],
-            dvector![-120.0],
-        ],
+        vec![dvector![2.0], dvector![6.0], dvector![1.0], dvector![0.03]],
     );
     let mut rng = rand::rng();
     let mut pop = Population::new::<2, 1>(conf.n_pop);
