@@ -69,9 +69,9 @@ impl Individual {
     #[must_use]
     pub fn test_steady_state(&mut self, test_data: &TestSet, conf: &Config) -> f32 {
         test_data
-            .inputs
+            .get_inputs()
             .iter()
-            .zip(test_data.outputs.iter())
+            .zip(test_data.get_outputs().iter())
             .map(|(input, output)| -> f32 {
                 (self.eval_steady_state(input, conf) - output).norm_squared()
             })
@@ -138,15 +138,15 @@ mod tests {
     fn test_nondestructive_addnode() {
         use super::Individual;
         use nalgebra::dvector;
-        let xor_test_inputs: TestSet = TestSet {
-            inputs: vec![
+        let xor_test_inputs: TestSet = TestSet::new(
+            vec![
                 dvector![0.0, 0.0],
                 dvector![0.0, 1.0],
                 dvector![1.0, 0.0],
                 dvector![1.0, 1.0],
             ],
-            outputs: vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
-        };
+            vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
+        );
         let test_config: Config = Config {
             num_generations: 100,
             n_pop: 50,

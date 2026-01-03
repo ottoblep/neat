@@ -19,20 +19,20 @@ fn main() {
         node_mut_chance: 60,
         steady_state_eval_steps_multiplier: 2,
     };
-    let multiplication_test_inputs: TestSet = TestSet {
-        inputs: vec![
+    let multiplication_test_inputs: TestSet = TestSet::new(
+        vec![
             dvector![1.0, 2.0],
             dvector![5.0, 6.0],
             dvector![-3.0, 8.0],
             dvector![-12.0, 10.0],
         ],
-        outputs: vec![
+        vec![
             dvector![2.0],
             dvector![30.0],
             dvector![-24.0],
             dvector![-120.0],
         ],
-    };
+    );
     let mut rng = rand::rng();
     let mut pop = Population::new::<2, 1>(conf.n_pop);
     for _generation in 0..conf.num_generations {
@@ -62,15 +62,15 @@ mod tests {
             node_mut_chance: 1,
             steady_state_eval_steps_multiplier: 2,
         };
-        let xor_test_inputs: TestSet = TestSet {
-            inputs: vec![
+        let xor_test_inputs: TestSet = TestSet::new(
+            vec![
                 dvector![0.0, 0.0],
                 dvector![0.0, 1.0],
                 dvector![1.0, 0.0],
                 dvector![1.0, 1.0],
             ],
-            outputs: vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
-        };
+            vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
+        );
 
         for _ in 0..5 {
             let mut pop = Population::new::<2, 1>(conf.n_pop);

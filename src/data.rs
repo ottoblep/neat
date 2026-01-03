@@ -1,6 +1,22 @@
 use nalgebra::DVector;
 
 pub struct TestSet {
-    pub inputs: Vec<DVector<f32>>,
-    pub outputs: Vec<DVector<f32>>,
+    inputs: Vec<DVector<f32>>,
+    outputs: Vec<DVector<f32>>,
+}
+impl TestSet {
+    #[must_use]
+    pub fn new(inputs: Vec<DVector<f32>>, outputs: Vec<DVector<f32>>) -> TestSet {
+        TestSet { inputs, outputs }
+    }
+
+    #[must_use]
+    pub fn get_inputs(&self) -> &Vec<DVector<f32>> {
+        &self.inputs
+    }
+
+    #[must_use]
+    pub fn get_outputs(&self) -> &Vec<DVector<f32>> {
+        &self.outputs
+    }
 }
