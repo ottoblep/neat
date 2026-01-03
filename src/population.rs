@@ -1,5 +1,4 @@
 use rand::Rng;
-use rayon::iter::IndexedParallelIterator;
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 
