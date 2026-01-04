@@ -1,5 +1,3 @@
-use core::num;
-
 use rand::Rng;
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
@@ -10,9 +8,9 @@ use crate::genome::Genome;
 use crate::individual::Individual;
 
 pub struct PopulationStats {
-    pub average_fitness: f32,
-    pub best_fitness: f32,
-    pub average_genome_size: f32,
+    pub average_fitness: Fitness,
+    pub best_fitness: Fitness,
+    pub average_genome_size: usize,
     pub best_genome: Genome,
 }
 impl PopulationStats {
@@ -109,19 +107,19 @@ impl Population {
     }
 
     #[must_use]
-    pub fn average_genome_size(&self) -> f32 {
+    pub fn average_genome_size(&self) -> usize {
         let total_size: usize = self.pops.iter().map(|ind| ind.genome_size()).sum();
-        total_size as f32 / self.pops.len() as f32
+        total_size / self.pops.len()
     }
 
     #[must_use]
     pub fn reproduce(
         &mut self,
-        env: impl Environment,
+        envs: Vec<&impl Environment>,
         rng_dev: &mut impl Rng,
         conf: &Config,
     ) -> (Population, PopulationStats) {
-        let eval_result: EvaluationResult = self.evaluate(env);
+        let eval_result: EvaluationResult = self.evaluate(envs);
         let mut pop = Population {
             pops: eval_result
                 .sorted_idxs
