@@ -8,6 +8,7 @@ pub trait Environment: Clone + Send {
     fn act(&mut self, input: &DVector<f32>) -> Option<f32>;
 }
 
+#[derive(Clone)]
 struct SteadyStateEnv {
     input: DVector<f32>,
     expected_final_output: DVector<f32>,

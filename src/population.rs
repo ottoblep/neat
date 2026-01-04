@@ -43,6 +43,7 @@ impl Population {
     }
 
     #[must_use]
+    // TODO: add evaluation on multiple envs per reproduction cycle
     fn evaluate(&mut self, env: impl Environment) -> EvaluationResult {
         let mut indexed_fitness: Vec<(usize, f32)> = (0..self.pops.len())
             .into_par_iter()
@@ -102,11 +103,11 @@ impl Population {
     #[must_use]
     pub fn reproduce(
         &mut self,
-        test_data: &TestSet,
+        env: impl Environment,
         rng_dev: &mut impl Rng,
         conf: &Config,
     ) -> (Population, PopulationStats) {
-        let eval_result: EvaluationResult = self.evaluate(test_data, conf);
+        let eval_result: EvaluationResult = self.evaluate(env);
         let mut pop = Population {
             pops: eval_result
                 .sorted_idxs
