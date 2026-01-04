@@ -2,7 +2,7 @@ use crate::data::TestSet;
 use crate::individual::Individual;
 use nalgebra::DVector;
 
-pub trait Environment {
+pub trait Environment: Clone + Send {
     fn observe(&self) -> &DVector<f32>;
     // The individual acts until the environment returns a final result
     fn act(&mut self, input: &DVector<f32>) -> Option<f32>;
