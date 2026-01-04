@@ -1,9 +1,10 @@
+use core::num;
+
 use rand::Rng;
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 
 use crate::config::Config;
-use crate::data::TestSet;
 use crate::environment::Environment;
 use crate::genome::Genome;
 use crate::individual::Individual;
@@ -24,8 +25,11 @@ impl PopulationStats {
     }
 }
 
+type Fitness = f32;
+type PopulationFitness = Vec<Fitness>;
+type PopulationOrdering = Vec<usize>;
 struct EvaluationResult {
-    sorted_idxs: Vec<usize>,
+    sorted_idxs: PopulationOrdering,
     population_stats: PopulationStats,
 }
 
@@ -42,34 +46,44 @@ impl Population {
         }
     }
 
-    #[must_use]
-    // TODO: add evaluation on multiple envs per reproduction cycle
-    fn evaluate(&mut self, env: impl Environment) -> EvaluationResult {
-        let mut indexed_fitness: Vec<(usize, f32)> = (0..self.pops.len())
+    fn determine_fitnesses_singleenv(&mut self, env: &impl Environment) -> PopulationFitness {
+        (0..self.pops.len())
             .into_par_iter()
-            .map_with(env, |thread_env, i| {
-                (i, self.pops[i].clone().evaluate(thread_env))
+            .map_with(env.clone(), |thread_env, i| {
+                self.pops[i].clone().evaluate(thread_env)
             })
-            .collect();
+            .collect()
+    }
 
-        let average_fitness: f32 = indexed_fitness
-            .iter()
-            .map(|(_, fit): &(usize, f32)| *fit)
-            .sum::<f32>()
-            / indexed_fitness.len() as f32;
+    fn determine_fitnesses_multienv(&mut self, envs: Vec<&impl Environment>) -> PopulationFitness {
+        envs.iter()
+            .map(|env| self.determine_fitnesses_singleenv(*env))
+            .reduce(|fitnesses_env1, fitnesses_env2| {
+                fitnesses_env1
+                    .iter()
+                    .zip(fitnesses_env2.iter())
+                    .map(|(fitness_env1, fitness_env2)| fitness_env1 + fitness_env2)
+                    .collect()
+            })
+            .unwrap()
+    }
 
-        let best_fitness: f32 = indexed_fitness
-            .iter()
-            .map(|(_, fit): &(usize, f32)| *fit)
-            .fold(f32::MAX, |a, b| a.min(b));
+    #[must_use]
+    fn evaluate(&mut self, envs: Vec<&impl Environment>) -> EvaluationResult {
+        let pop_fitness: PopulationFitness = self.determine_fitnesses_multienv(envs);
 
-        indexed_fitness.sort_unstable_by(|(_, a): &(usize, f32), (_, b): &(usize, f32)| {
+        let average_fitness: f32 = pop_fitness.iter().sum::<f32>() / pop_fitness.len() as f32;
+
+        let best_fitness: f32 = pop_fitness.iter().fold(f32::MAX, |a, b| a.min(*b));
+
+        let mut ordering: Vec<(usize, &Fitness)> = pop_fitness.iter().enumerate().collect();
+        ordering.sort_unstable_by(|(_, a): &(usize, &f32), (_, b): &(usize, &f32)| {
             a.partial_cmp(&b).unwrap_or(std::cmp::Ordering::Equal)
         });
 
-        let sorted_idxs: Vec<usize> = indexed_fitness
+        let sorted_idxs: PopulationOrdering = ordering
             .drain(..)
-            .map(|(i_a, _): (usize, f32)| i_a)
+            .map(|(i_a, _): (usize, &f32)| i_a)
             .collect();
 
         EvaluationResult {
