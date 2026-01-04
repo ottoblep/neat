@@ -1,5 +1,3 @@
-use crate::data::TestSet;
-use crate::individual::Individual;
 use nalgebra::DVector;
 
 pub trait Environment: Clone + Send {
@@ -9,14 +7,14 @@ pub trait Environment: Clone + Send {
 }
 
 #[derive(Clone)]
-struct SteadyStateEnv {
+pub struct SteadyStateEnv {
     input: DVector<f32>,
     expected_final_output: DVector<f32>,
     steps: usize,
     step: usize,
 }
 impl SteadyStateEnv {
-    fn new(
+    pub fn new(
         input: DVector<f32>,
         expected_final_output: DVector<f32>,
         steps: usize,
@@ -43,15 +41,4 @@ impl Environment for SteadyStateEnv {
             Some(error)
         }
     }
-}
-
-pub fn eval_steady_state(ind: &mut Individual, data: &TestSet, steps: usize) -> f32 {
-    data.get_inputs()
-        .iter()
-        .zip(data.get_outputs().iter())
-        .map(|(input, expected_output)| {
-            let mut env = SteadyStateEnv::new(input.clone(), expected_output.clone(), steps);
-            ind.evaluate(&mut env)
-        })
-        .sum()
 }

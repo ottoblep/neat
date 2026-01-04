@@ -1,3 +1,4 @@
+use crate::environment::SteadyStateEnv;
 use nalgebra::DVector;
 use rand::Rng;
 use std::ops::Range;
@@ -31,20 +32,18 @@ impl TestSet {
         TestSet { inputs, outputs }
     }
 
-    #[must_use]
-    pub fn get_inputs(&self) -> &Vec<DVector<f32>> {
-        &self.inputs
-    }
-
-    #[must_use]
-    pub fn get_outputs(&self) -> &Vec<DVector<f32>> {
-        &self.outputs
-    }
-
     pub fn print(&self) {
         for (i, o) in self.inputs.iter().zip(self.outputs.iter()) {
             println!("Input: {:?} => Output: {:?}", i, o);
         }
+    }
+
+    pub fn to_steady_state_envs(&self, steps: usize) -> Vec<SteadyStateEnv> {
+        self.inputs
+            .iter()
+            .zip(self.outputs.iter())
+            .map(|(input, output)| SteadyStateEnv::new(input.clone(), output.clone(), steps))
+            .collect()
     }
 }
 

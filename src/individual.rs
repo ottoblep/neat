@@ -131,7 +131,6 @@ mod tests {
 
     #[test]
     fn test_nondestructive_addnode() {
-        use crate::environment::eval_steady_state;
         let xor_test_inputs: TestSet = TestSet::new(
             vec![
                 dvector![0.0, 0.0],
