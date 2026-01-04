@@ -93,7 +93,7 @@ impl Individual {
 #[cfg(test)]
 mod tests {
     use super::Individual;
-    use crate::data::TestSet;
+    use crate::environment::SteadyStateEnv;
     use nalgebra::dvector;
 
     #[test]
@@ -131,22 +131,14 @@ mod tests {
 
     #[test]
     fn test_nondestructive_addnode() {
-        let xor_test_inputs: TestSet = TestSet::new(
-            vec![
-                dvector![0.0, 0.0],
-                dvector![0.0, 1.0],
-                dvector![1.0, 0.0],
-                dvector![1.0, 1.0],
-            ],
-            vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
-        );
+        let env = SteadyStateEnv::new(dvector![1.0, 0.0], dvector![1.0], 20);
         let mut rng = rand::rng();
         let mut genome = super::Genome::new::<2, 1>();
         let mut ind: Individual = Individual::from_genome(genome.clone());
-        let fitness_before: f32 = eval_steady_state(&mut ind, &xor_test_inputs, 20);
+        let fitness_before: f32 = ind.evaluate(&mut env.clone());
         let genome_mut = genome.mutate_addnode(&mut rng);
         let mut ind2: Individual = Individual::from_genome(genome_mut);
-        let fitness_after: f32 = eval_steady_state(&mut ind2, &xor_test_inputs, 20);
+        let fitness_after: f32 = ind2.evaluate(&mut env.clone());
         assert_eq!(fitness_before, fitness_after);
     }
 }

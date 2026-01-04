@@ -10,10 +10,11 @@ use crate::data::TestSet;
 use crate::population::Population;
 use rand::Rng;
 
-fn run_algorithm(data: &TestSet, conf: &Config, rng_dev: &mut impl Rng) {
+fn run_steady_state_algorithm(data: &TestSet, conf: &Config, rng_dev: &mut impl Rng) {
     let mut pop = Population::new::<2, 1>(conf.n_pop);
+    let envs = data.to_steady_state_envs(conf.steady_state_steps);
     for _generation in 0..conf.num_generations {
-        let (new_pop, population_stats) = pop.reproduce(&data, rng_dev, &conf);
+        let (new_pop, population_stats) = pop.reproduce(envs.iter().collect(), rng_dev, &conf);
         println!("Generation {_generation}:");
         population_stats.print();
         pop = new_pop;
@@ -38,7 +39,7 @@ fn main() {
         &mut rng,
     );
     generated_test_data.print();
-    run_algorithm(&generated_test_data, &conf, &mut rng);
+    run_steady_state_algorithm(&generated_test_data, &conf, &mut rng);
 }
 
 #[cfg(test)]
@@ -68,12 +69,14 @@ mod tests {
             ],
             vec![dvector![0.0], dvector![1.0], dvector![1.0], dvector![0.0]],
         );
+        let envs = xor_test_inputs.to_steady_state_envs(conf.steady_state_steps);
 
         for _ in 0..5 {
             let mut pop = Population::new::<2, 1>(conf.n_pop);
             let mut rng = rand::rng();
             for _generation in 0..conf.num_generations {
-                let (new_pop, population_stats) = pop.reproduce(&xor_test_inputs, &mut rng, &conf);
+                let (new_pop, population_stats) =
+                    pop.reproduce(envs.iter().collect(), &mut rng, &conf);
                 println!("Generation {_generation}:");
                 population_stats.print();
                 pop = new_pop;
