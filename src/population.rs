@@ -7,6 +7,10 @@ use crate::environment::Environment;
 use crate::genome::Genome;
 use crate::individual::Individual;
 
+type Fitness = f32;
+type PopulationFitness = Vec<Fitness>;
+type PopulationOrdering = Vec<usize>;
+
 pub struct PopulationStats {
     pub average_fitness: Fitness,
     pub best_fitness: Fitness,
@@ -23,9 +27,6 @@ impl PopulationStats {
     }
 }
 
-type Fitness = f32;
-type PopulationFitness = Vec<Fitness>;
-type PopulationOrdering = Vec<usize>;
 struct EvaluationResult {
     sorted_idxs: PopulationOrdering,
     population_stats: PopulationStats,
