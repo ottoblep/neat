@@ -4,13 +4,13 @@ mod environment;
 mod genome;
 mod individual;
 mod population;
+mod tui;
 
 use crate::config::Config;
 use crate::data::TestSet;
 use crate::population::Population;
 
 pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error> {
-    const GREETING: &str = "Hello, world!";
     let mut rng = rand::rng();
     let conf: Config = Config {
         num_generations: 6000,
@@ -38,7 +38,7 @@ pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error
         println!("Generation {_generation}:");
         population_stats.print();
         pop = new_pop;
-        terminal.draw(|frame| frame.render_widget(format!("{GREETING}"), frame.area()))?;
+        crate::tui::draw(terminal);
     }
     Ok(())
 }
