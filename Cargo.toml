@@ -1,6 +1,7 @@
 [package]
 authors = []
 edition = "2024"
+rust-version = "1.92.0"
 # If you change the name here, you must also do it in flake.nix (and run `cargo generate-lockfile` afterwards)
 name = "neat"
 description = "A simple Rust project using Nix"
