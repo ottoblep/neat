@@ -28,15 +28,15 @@ pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error
         -1.0..1.0,
         &mut rng,
     );
-    generated_test_data.print();
+    // generated_test_data.print();
 
     let mut pop = Population::new::<2, 1>(conf.n_pop);
     let envs = generated_test_data.to_steady_state_envs(conf.steady_state_steps);
 
     for _generation in 0..conf.num_generations {
         let (new_pop, population_stats) = pop.reproduce(envs.iter().collect(), &mut rng, &conf);
-        println!("Generation {_generation}:");
-        population_stats.print();
+        // println!("Generation {_generation}:");
+        // population_stats.print();
         pop = new_pop;
         crate::tui::draw(terminal);
     }

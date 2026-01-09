@@ -32,5 +32,5 @@ pub fn draw(terminal: &mut ratatui::DefaultTerminal) {
                 ]),
         );
 
-    terminal.draw(|frame| frame.render_widget(chart, frame.area()))?;
+    let _ = terminal.draw(|frame| frame.render_widget(chart, frame.area()));
 }
