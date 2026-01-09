@@ -17,7 +17,7 @@ pub fn draw<'a>(
     let avg_fitness = stats.get_average_fitness_series();
     let datasets = vec![
         Dataset::default()
-            .name("dta2")
+            .name("Average Fitness")
             .marker(symbols::Marker::Dot)
             .style(Style::default().fg(Color::Cyan))
             .data(&avg_fitness),
@@ -25,7 +25,7 @@ pub fn draw<'a>(
     let chart = Chart::new(datasets)
         .block(
             Block::bordered().title(Span::styled(
-                "Chart",
+                "Fitness",
                 Style::default()
                     .fg(Color::Cyan)
                     .add_modifier(Modifier::BOLD),
@@ -33,12 +33,12 @@ pub fn draw<'a>(
         )
         .x_axis(
             Axis::default()
-                .title("X Axis")
+                .title("Generation")
                 .style(Style::default().fg(Color::Gray)),
         )
         .y_axis(
             Axis::default()
-                .title("Y Axis")
+                .title("Fitness")
                 .style(Style::default().fg(Color::Gray))
                 .bounds([-20.0, 20.0])
                 .labels([
