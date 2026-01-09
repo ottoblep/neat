@@ -41,8 +41,8 @@ pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error
         pop_stats_series.add(population_stats);
         // println!("Generation {_generation}:");
         // population_stats.print();
+        let _ = crate::tui::draw(terminal, &pop_stats_series);
         pop = new_pop;
-        crate::tui::draw(terminal, &pop_stats_series);
     }
     Ok(())
 }

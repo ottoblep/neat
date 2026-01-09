@@ -1,4 +1,7 @@
+use std::io::Error;
+
 use ratatui::{
+    CompletedFrame,
     style::{Color, Modifier, Style},
     symbols,
     text::Span,
@@ -7,7 +10,10 @@ use ratatui::{
 
 use crate::statistics::PopulationStatSeries;
 
-pub fn draw(terminal: &mut ratatui::DefaultTerminal, stats: &PopulationStatSeries) {
+pub fn draw<'a>(
+    terminal: &'a mut ratatui::DefaultTerminal,
+    stats: &'a PopulationStatSeries,
+) -> Result<CompletedFrame<'a>, Error> {
     let avg_fitness = stats.get_average_fitness_series();
     let datasets = vec![
         Dataset::default()
@@ -42,5 +48,5 @@ pub fn draw(terminal: &mut ratatui::DefaultTerminal, stats: &PopulationStatSerie
                 ]),
         );
 
-    let _ = terminal.draw(|frame| frame.render_widget(chart, frame.area()));
+    terminal.draw(|frame| frame.render_widget(chart, frame.area()))
 }
