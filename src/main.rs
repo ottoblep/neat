@@ -10,6 +10,7 @@ mod tui;
 use crate::config::Config;
 use crate::data::TestSet;
 use crate::population::Population;
+use crate::statistics::PopulationStatSeries;
 
 pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error> {
     let mut rng = rand::rng();
@@ -33,13 +34,15 @@ pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error
 
     let mut pop = Population::new::<2, 1>(conf.n_pop);
     let envs = generated_test_data.to_steady_state_envs(conf.steady_state_steps);
+    let mut pop_stats_series = PopulationStatSeries::new();
 
     for _generation in 0..conf.num_generations {
         let (new_pop, population_stats) = pop.reproduce(envs.iter().collect(), &mut rng, &conf);
+        pop_stats_series.add(population_stats);
         // println!("Generation {_generation}:");
         // population_stats.print();
         pop = new_pop;
-        crate::tui::draw(terminal);
+        crate::tui::draw(terminal, &pop_stats_series);
     }
     Ok(())
 }

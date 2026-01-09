@@ -7,13 +7,14 @@ use ratatui::{
 
 use crate::statistics::PopulationStatSeries;
 
-pub fn draw(terminal: &mut ratatui::DefaultTerminal, stats: PopulationStatSeries) {
+pub fn draw(terminal: &mut ratatui::DefaultTerminal, stats: &PopulationStatSeries) {
+    let avg_fitness = stats.get_average_fitness_series();
     let datasets = vec![
         Dataset::default()
             .name("dta2")
             .marker(symbols::Marker::Dot)
             .style(Style::default().fg(Color::Cyan))
-            .data(stats.to_x()),
+            .data(&avg_fitness),
     ];
     let chart = Chart::new(datasets)
         .block(

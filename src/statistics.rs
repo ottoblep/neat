@@ -29,13 +29,19 @@ pub struct PopulationStatSeries {
     data: Vec<PopulationStats>,
 }
 impl PopulationStatSeries {
-    fn new() -> PopulationStatSeries {
+    pub fn new() -> PopulationStatSeries {
         PopulationStatSeries { data: vec![] }
     }
 
-    fn add(&mut self, new: PopulationStats) {
+    pub fn add(&mut self, new: PopulationStats) {
         self.data.push(new)
     }
 
-    fn to_fitness_series() -> Vec<(f32, f32)> {}
+    pub fn get_average_fitness_series(&self) -> Vec<(f64, f64)> {
+        self.data
+            .iter()
+            .enumerate()
+            .map(|(generation, stat)| (generation as f64, stat.average_fitness as f64))
+            .collect()
+    }
 }
