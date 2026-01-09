@@ -1,36 +1,13 @@
+use crate::statistics::{
+    EvaluationResult, Fitness, PopulationFitness, PopulationOrdering, PopulationStats,
+};
 use rand::Rng;
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 
 use crate::config::Config;
 use crate::environment::Environment;
-use crate::genome::Genome;
 use crate::individual::Individual;
-
-type Fitness = f32;
-type PopulationFitness = Vec<Fitness>;
-type PopulationOrdering = Vec<usize>;
-
-pub struct PopulationStats {
-    pub average_fitness: Fitness,
-    pub best_fitness: Fitness,
-    pub average_genome_size: usize,
-    pub best_genome: Genome,
-}
-impl PopulationStats {
-    pub fn print(&self) {
-        println!("  Average fitness: {}", self.average_fitness);
-        println!("  Best fitness: {}", self.best_fitness);
-        println!("  Average genome size: {}", self.average_genome_size);
-        println!("  Best Network");
-        self.best_genome.print();
-    }
-}
-
-struct EvaluationResult {
-    sorted_idxs: PopulationOrdering,
-    population_stats: PopulationStats,
-}
 
 pub struct Population {
     pops: Vec<Individual>,

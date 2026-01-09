@@ -1,11 +1,20 @@
 use ratatui::{
     style::{Color, Modifier, Style},
+    symbols,
     text::Span,
     widgets::{Axis, Block, Chart, Dataset},
 };
 
-pub fn draw(terminal: &mut ratatui::DefaultTerminal) {
-    let datasets = vec![Dataset::default()];
+use crate::statistics::PopulationStatSeries;
+
+pub fn draw(terminal: &mut ratatui::DefaultTerminal, stats: PopulationStatSeries) {
+    let datasets = vec![
+        Dataset::default()
+            .name("dta2")
+            .marker(symbols::Marker::Dot)
+            .style(Style::default().fg(Color::Cyan))
+            .data(stats.to_x()),
+    ];
     let chart = Chart::new(datasets)
         .block(
             Block::bordered().title(Span::styled(

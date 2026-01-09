@@ -4,6 +4,7 @@ mod environment;
 mod genome;
 mod individual;
 mod population;
+mod statistics;
 mod tui;
 
 use crate::config::Config;
