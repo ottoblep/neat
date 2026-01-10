@@ -37,11 +37,11 @@ impl PopulationStatSeries {
         self.data.push(new)
     }
 
-    pub fn get_average_fitness_series(&self) -> Vec<(f64, f64)> {
+    pub fn get_best_fitness_series(&self) -> Vec<(f64, f64)> {
         self.data
             .iter()
             .enumerate()
-            .map(|(generation, stat)| (generation as f64, stat.average_fitness as f64))
+            .map(|(generation, stat)| (generation as f64, stat.best_fitness as f64))
             .collect()
     }
 }

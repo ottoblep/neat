@@ -69,7 +69,7 @@ pub fn draw<'a>(
     terminal: &'a mut ratatui::DefaultTerminal,
     stats: &'a PopulationStatSeries,
 ) -> Result<CompletedFrame<'a>, Error> {
-    let avg_fitness = stats.get_average_fitness_series();
-    let chart = chart("Average Fitness", "Generation", "Fitness", &avg_fitness);
+    let best_fitness = stats.get_best_fitness_series();
+    let chart = chart("Best Fitness", "Generation", "Fitness", &best_fitness);
     terminal.draw(|frame| frame.render_widget(chart, frame.area()))
 }
