@@ -19,13 +19,9 @@ fn chart<'a>(
     points: &'a Vec<(f64, f64)>,
 ) -> Chart<'a> {
     let x_limits: Limits = (0.0, (points.len().saturating_sub(1) as f64));
-    let mut y_limits: Limits = points.iter().fold((f64::MIN, f64::MAX), |acc, (_, a)| {
+    let y_limits: Limits = points.iter().fold((f64::MAX, f64::MIN), |acc, (_, a)| {
         (acc.0.min(*a), acc.1.max(*a))
     });
-
-    let pad = ((y_limits.0 - y_limits.0) * 0.1).max(0.5);
-    y_limits.0 -= pad;
-    y_limits.1 += pad;
 
     let datasets = vec![
         Dataset::default()
