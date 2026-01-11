@@ -11,6 +11,25 @@ use ratatui::{
 
 use crate::statistics::PopulationStatSeries;
 
+const NAMED_COLORS: [Color; 16] = [
+    Color::Red,
+    Color::Cyan,
+    Color::Yellow,
+    Color::Green,
+    Color::Blue,
+    Color::Magenta,
+    Color::Gray,
+    Color::LightRed,
+    Color::LightGreen,
+    Color::LightYellow,
+    Color::LightBlue,
+    Color::LightMagenta,
+    Color::LightCyan,
+    Color::White,
+    Color::Black,
+    Color::DarkGray,
+];
+
 type Limits = (f64, f64);
 
 fn chart<'a>(
@@ -29,12 +48,13 @@ fn chart<'a>(
 
     let datasets = datasets
         .into_iter()
-        .map(|(title, points)| {
+        .enumerate()
+        .map(|(num, (title, points))| {
             Dataset::default()
                 .name(*title)
                 .marker(symbols::Marker::Dot)
                 .graph_type(GraphType::Scatter)
-                .style(Style::default().fg(Color::Cyan))
+                .style(Style::default().fg(*NAMED_COLORS.get(num).unwrap_or(&Color::Black)))
                 .data(&points)
         })
         .collect();
