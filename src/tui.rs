@@ -12,12 +12,12 @@ use ratatui::{
 use crate::statistics::PopulationStatSeries;
 
 const NAMED_COLORS: [Color; 16] = [
-    Color::Red,
     Color::Cyan,
-    Color::Yellow,
-    Color::Green,
-    Color::Blue,
     Color::Magenta,
+    Color::Green,
+    Color::Red,
+    Color::Yellow,
+    Color::Blue,
     Color::Gray,
     Color::LightRed,
     Color::LightGreen,
@@ -111,19 +111,30 @@ pub fn draw<'a>(
         .map(|(a, b)| (a as f64, b as f64))
         .collect();
 
+    let avg_genome_size_data: Vec<(f64, f64)> = stats
+        .average_genome_size
+        .clone()
+        .into_iter()
+        .enumerate()
+        .map(|(a, b)| (a as f64, b as f64))
+        .collect();
+
     let fitness_datasets = vec![
         ("Best Fitness", best_fitness_data),
         ("Avg Fitness", avg_fitness_data),
     ];
+    let genome_datasets = vec![("Avg Genome Size", avg_genome_size_data)];
 
-    let fitness_chart = chart("Best Fitness", "Generation", "Fitness", &fitness_datasets);
+    let fitness_chart = chart("Fitness", "Generation", "Fitness", &fitness_datasets);
+    let genome_size_chart = chart("Genome Size", "Generation", "Size", &genome_datasets);
 
     terminal.draw(|frame| {
         let layout = Layout::default()
             .direction(Direction::Vertical)
-            .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
+            .constraints(vec![Constraint::Percentage(70), Constraint::Percentage(30)])
             .split(frame.area());
 
         frame.render_widget(fitness_chart, layout[0]);
+        frame.render_widget(genome_size_chart, layout[1]);
     })
 }
