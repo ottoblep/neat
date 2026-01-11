@@ -2,6 +2,7 @@ use std::io::Error;
 
 use ratatui::{
     CompletedFrame,
+    layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     symbols,
     text::Span,
@@ -69,7 +70,31 @@ pub fn draw<'a>(
     terminal: &'a mut ratatui::DefaultTerminal,
     stats: &'a PopulationStatSeries,
 ) -> Result<CompletedFrame<'a>, Error> {
-    let best_fitness = stats.get_best_fitness_series();
-    let chart = chart("Best Fitness", "Generation", "Fitness", &best_fitness);
-    terminal.draw(|frame| frame.render_widget(chart, frame.area()))
+    let best_fitness_data: Vec<(f64, f64)> = stats
+        .best_fitness
+        .clone()
+        .into_iter()
+        .enumerate()
+        .map(|(a, b)| (a as f64, b as f64))
+        .collect();
+    let avg_fitness_data: Vec<(f64, f64)> = stats
+        .average_fitness
+        .clone()
+        .into_iter()
+        .enumerate()
+        .map(|(a, b)| (a as f64, b as f64))
+        .collect();
+
+    let best_fitness_chart = chart("Best Fitness", "Generation", "Fitness", &best_fitness_data);
+    let avg_fitness_chart = chart("Avg Fitness", "Generation", "Fitness", &avg_fitness_data);
+
+    terminal.draw(|frame| {
+        let layout = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
+            .split(frame.area());
+
+        frame.render_widget(best_fitness_chart, layout[0]);
+        frame.render_widget(avg_fitness_chart, layout[1]);
+    })
 }

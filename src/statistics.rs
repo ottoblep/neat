@@ -26,22 +26,22 @@ pub struct EvaluationResult {
 }
 
 pub struct PopulationStatSeries {
-    data: Vec<PopulationStats>,
+    pub average_fitness: Vec<Fitness>,
+    pub best_fitness: Vec<Fitness>,
+    pub average_genome_size: Vec<usize>,
 }
 impl PopulationStatSeries {
     pub fn new() -> PopulationStatSeries {
-        PopulationStatSeries { data: vec![] }
+        PopulationStatSeries {
+            average_fitness: vec![],
+            best_fitness: vec![],
+            average_genome_size: vec![],
+        }
     }
 
     pub fn add(&mut self, new: PopulationStats) {
-        self.data.push(new)
-    }
-
-    pub fn get_best_fitness_series(&self) -> Vec<(f64, f64)> {
-        self.data
-            .iter()
-            .enumerate()
-            .map(|(generation, stat)| (generation as f64, stat.best_fitness as f64))
-            .collect()
+        self.average_fitness.push(new.average_fitness);
+        self.best_fitness.push(new.best_fitness);
+        self.average_genome_size.push(new.average_genome_size);
     }
 }
