@@ -17,21 +17,27 @@ fn chart<'a>(
     title: &'a str,
     x_label: &'a str,
     y_label: &'a str,
-    points: &'a Vec<(f64, f64)>,
+    datasets: &'a Vec<(&'a str, Vec<(f64, f64)>)>,
 ) -> Chart<'a> {
-    let x_limits: Limits = (0.0, (points.len().saturating_sub(1) as f64));
-    let y_limits: Limits = points.iter().fold((f64::MAX, f64::MIN), |acc, (_, a)| {
+    let combined = datasets.iter().map(|(_, b)| b).flatten();
+    let x_limits: Limits = combined.clone().fold((f64::MAX, f64::MIN), |acc, (a, _)| {
+        (acc.0.min(*a), acc.1.max(*a))
+    });
+    let y_limits: Limits = combined.clone().fold((f64::MAX, f64::MIN), |acc, (_, a)| {
         (acc.0.min(*a), acc.1.max(*a))
     });
 
-    let datasets = vec![
-        Dataset::default()
-            .name(title)
-            .marker(symbols::Marker::Dot)
-            .graph_type(GraphType::Scatter)
-            .style(Style::default().fg(Color::Cyan))
-            .data(&points),
-    ];
+    let datasets = datasets
+        .into_iter()
+        .map(|(title, points)| {
+            Dataset::default()
+                .name(*title)
+                .marker(symbols::Marker::Dot)
+                .graph_type(GraphType::Scatter)
+                .style(Style::default().fg(Color::Cyan))
+                .data(&points)
+        })
+        .collect();
 
     Chart::new(datasets)
         .block(
@@ -85,8 +91,12 @@ pub fn draw<'a>(
         .map(|(a, b)| (a as f64, b as f64))
         .collect();
 
-    let best_fitness_chart = chart("Best Fitness", "Generation", "Fitness", &best_fitness_data);
-    let avg_fitness_chart = chart("Avg Fitness", "Generation", "Fitness", &avg_fitness_data);
+    let fitness_datasets = vec![
+        ("Best Fitness", best_fitness_data),
+        ("Avg Fitness", avg_fitness_data),
+    ];
+
+    let fitness_chart = chart("Best Fitness", "Generation", "Fitness", &fitness_datasets);
 
     terminal.draw(|frame| {
         let layout = Layout::default()
@@ -94,7 +104,6 @@ pub fn draw<'a>(
             .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
             .split(frame.area());
 
-        frame.render_widget(best_fitness_chart, layout[0]);
-        frame.render_widget(avg_fitness_chart, layout[1]);
+        frame.render_widget(fitness_chart, layout[0]);
     })
 }
