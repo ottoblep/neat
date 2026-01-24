@@ -18,8 +18,8 @@ pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error
     let mut rng = rand::rng();
     let conf: Config = Config {
         num_generations: 6000,
-        n_pop: 10000,
-        n_fittest_reproduce: 6000,
+        n_pop: 1000,
+        n_fittest_reproduce: 600,
         edge_mut_chance: 20,
         edge_mut_strength: 0.1,
         node_mut_chance: 1,
