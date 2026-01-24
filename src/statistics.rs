@@ -36,6 +36,7 @@ pub struct PopulationStatSeries {
     pub approx_diversity: Vec<f32>,
 }
 impl PopulationStatSeries {
+    #[must_use]
     pub fn new() -> PopulationStatSeries {
         PopulationStatSeries {
             average_fitness: vec![],

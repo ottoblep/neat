@@ -14,6 +14,7 @@ pub struct SteadyStateEnv {
     step: usize,
 }
 impl SteadyStateEnv {
+    #[must_use]
     pub fn new(
         input: DVector<f32>,
         expected_final_output: DVector<f32>,
@@ -28,10 +29,12 @@ impl SteadyStateEnv {
     }
 }
 impl Environment for SteadyStateEnv {
+    #[must_use]
     fn observe(&self) -> &DVector<f32> {
         &self.input
     }
 
+    #[must_use]
     fn act(&mut self, input: &DVector<f32>) -> Option<f32> {
         if self.step < self.steps {
             self.step += 1;
