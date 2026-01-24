@@ -24,7 +24,7 @@ pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error
         edge_mut_strength: 0.1,
         node_mut_chance: 1,
         steady_state_steps: 13,
-        eval_diversity_fraction: Percentage::new(10).unwrap_or(BoundedU8::MAX),
+        eval_diversity_fraction: Percentage::new(1).unwrap_or(BoundedU8::MAX),
     };
 
     let generated_test_data = TestSet::generate(
@@ -53,6 +53,9 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use crate::statistics::Percentage;
+    use bounded_integer::BoundedU8;
+
     #[test]
     fn sample_xor() {
         use crate::config::Config;
@@ -68,6 +71,7 @@ mod tests {
             edge_mut_strength: 0.1,
             node_mut_chance: 1,
             steady_state_steps: 3,
+            eval_diversity_fraction: Percentage::new(1).unwrap_or(BoundedU8::MAX),
         };
         let xor_test_inputs: TestSet = TestSet::new(
             vec![
