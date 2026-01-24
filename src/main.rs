@@ -16,12 +16,13 @@ pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error
     let mut rng = rand::rng();
     let conf: Config = Config {
         num_generations: 6000,
-        n_pop: 1000,
-        n_fittest_reproduce: 600,
-        edge_mut_chance: 70,
+        n_pop: 10000,
+        n_fittest_reproduce: 6000,
+        edge_mut_chance: 20,
         edge_mut_strength: 0.1,
-        node_mut_chance: 2,
-        steady_state_steps: 9,
+        node_mut_chance: 1,
+        steady_state_steps: 13,
+        eval_diversity_fraction: fraction::Fraction::new(1 as u64, 10 as u64),
     };
 
     let generated_test_data = TestSet::generate(

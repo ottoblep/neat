@@ -1,4 +1,4 @@
-use nalgebra::DMatrix;
+use nalgebra::{DMatrix, EuclideanNorm, Norm};
 use rand::Rng;
 
 #[derive(Clone)]
@@ -57,6 +57,11 @@ impl Genome {
         new.network = new.network.remove_row(i);
         new.network = new.network.remove_column(i);
         new
+    }
+
+    #[must_use]
+    pub fn genome_distance(&self, other: &Genome) -> f32 {
+        self.network.metric_distance(&other.network)
     }
 
     #[must_use]

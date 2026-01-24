@@ -1,3 +1,5 @@
+use fraction::Fraction;
+
 pub struct Config {
     pub num_generations: usize,
     pub n_pop: usize,
@@ -6,4 +8,5 @@ pub struct Config {
     pub edge_mut_strength: f32,
     pub node_mut_chance: u32,
     pub steady_state_steps: usize,
+    pub eval_diversity_fraction: Fraction,
 }

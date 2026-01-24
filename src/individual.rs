@@ -88,6 +88,10 @@ impl Individual {
     pub fn get_genome(&self) -> &Genome {
         &self.genome
     }
+
+    pub fn genome_distance(&self, other: &Individual) -> f32 {
+        self.genome.genome_distance(&other.genome)
+    }
 }
 
 #[cfg(test)]

@@ -1,7 +1,11 @@
 use crate::statistics::{
     EvaluationResult, Fitness, PopulationFitness, PopulationOrdering, PopulationStats,
 };
+use fraction::Fraction;
+use fraction::ToPrimitive;
+use itertools::iproduct;
 use rand::Rng;
+use rand::seq::IteratorRandom;
 use rayon::iter::IntoParallelIterator;
 use rayon::iter::ParallelIterator;
 
@@ -45,7 +49,12 @@ impl Population {
     }
 
     #[must_use]
-    fn evaluate(&mut self, envs: Vec<&impl Environment>) -> EvaluationResult {
+    fn evaluate(
+        &mut self,
+        envs: Vec<&impl Environment>,
+        rng_dev: &mut impl Rng,
+        conf: &Config,
+    ) -> EvaluationResult {
         let pop_fitness: PopulationFitness = self.determine_fitnesses_multienv(envs);
 
         let average_fitness: f32 = pop_fitness.iter().sum::<f32>() / pop_fitness.len() as f32;
@@ -68,6 +77,7 @@ impl Population {
                 average_fitness,
                 best_fitness,
                 average_genome_size: self.average_genome_size(),
+                approx_diversity: self.get_approx_diversity(conf.eval_diversity_fraction, rng_dev),
             },
             sorted_idxs: sorted_idxs,
         }
@@ -97,7 +107,7 @@ impl Population {
         rng_dev: &mut impl Rng,
         conf: &Config,
     ) -> (Population, PopulationStats) {
-        let eval_result: EvaluationResult = self.evaluate(envs);
+        let eval_result: EvaluationResult = self.evaluate(envs, rng_dev, conf);
         let mut pop = Population {
             pops: eval_result
                 .sorted_idxs
@@ -109,5 +119,19 @@ impl Population {
         };
         pop.expand(self.pops.len());
         (pop, eval_result.population_stats)
+    }
+
+    pub fn get_approx_diversity(
+        &self,
+        frac_eval_individuals: Fraction,
+        rng_dev: &mut impl Rng,
+    ) -> f32 {
+        let n_samples: usize =
+            (frac_eval_individuals.to_f64().unwrap_or(1.0) * self.pops.len() as f64) as usize;
+        let sample_individuals = self.pops.iter().choose_multiple(rng_dev, n_samples);
+        iproduct!(&sample_individuals, &sample_individuals)
+            .map(|(ind_a, ind_b)| ind_a.genome_distance(ind_b))
+            .sum::<f32>()
+            / (n_samples * n_samples) as f32
     }
 }
