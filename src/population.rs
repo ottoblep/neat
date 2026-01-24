@@ -1,8 +1,7 @@
+use crate::statistics::Percentage;
 use crate::statistics::{
     EvaluationResult, Fitness, PopulationFitness, PopulationOrdering, PopulationStats,
 };
-use fraction::Fraction;
-use fraction::ToPrimitive;
 use itertools::iproduct;
 use rand::Rng;
 use rand::seq::IteratorRandom;
@@ -123,11 +122,11 @@ impl Population {
 
     pub fn get_approx_diversity(
         &self,
-        frac_eval_individuals: Fraction,
+        frac_eval_individuals: Percentage,
         rng_dev: &mut impl Rng,
     ) -> f32 {
         let n_samples: usize =
-            (frac_eval_individuals.to_f64().unwrap_or(1.0) * self.pops.len() as f64) as usize;
+            (frac_eval_individuals.get() as f64 * 0.1 * self.pops.len() as f64) as usize;
         let sample_individuals = self.pops.iter().choose_multiple(rng_dev, n_samples);
         iproduct!(&sample_individuals, &sample_individuals)
             .map(|(ind_a, ind_b)| ind_a.genome_distance(ind_b))

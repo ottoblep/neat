@@ -7,10 +7,12 @@ mod population;
 mod statistics;
 mod tui;
 
+use bounded_integer::BoundedU8;
+
 use crate::config::Config;
 use crate::data::TestSet;
 use crate::population::Population;
-use crate::statistics::PopulationStatSeries;
+use crate::statistics::{Percentage, PopulationStatSeries};
 
 pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error> {
     let mut rng = rand::rng();
@@ -22,7 +24,7 @@ pub fn app(terminal: &mut ratatui::DefaultTerminal) -> Result<(), std::io::Error
         edge_mut_strength: 0.1,
         node_mut_chance: 1,
         steady_state_steps: 13,
-        eval_diversity_fraction: fraction::Fraction::new(1 as u64, 10 as u64),
+        eval_diversity_fraction: Percentage::new(10).unwrap_or(BoundedU8::MAX),
     };
 
     let generated_test_data = TestSet::generate(

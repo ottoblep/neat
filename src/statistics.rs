@@ -1,8 +1,11 @@
+use bounded_integer::BoundedU8;
+
 use crate::genome::Genome;
 
 pub type Fitness = f32;
 pub type PopulationFitness = Vec<Fitness>;
 pub type PopulationOrdering = Vec<usize>;
+pub type Percentage = BoundedU8<0, 100>;
 
 pub struct PopulationStats {
     pub average_fitness: Fitness,

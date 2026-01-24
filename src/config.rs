@@ -1,4 +1,4 @@
-use fraction::Fraction;
+use crate::statistics::Percentage;
 
 pub struct Config {
     pub num_generations: usize,
@@ -8,5 +8,5 @@ pub struct Config {
     pub edge_mut_strength: f32,
     pub node_mut_chance: u32,
     pub steady_state_steps: usize,
-    pub eval_diversity_fraction: Fraction,
+    pub eval_diversity_fraction: Percentage,
 }
