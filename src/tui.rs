@@ -119,14 +119,24 @@ pub fn draw<'a>(
         .map(|(a, b)| (a as f64, b as f64))
         .collect();
 
+    let diversity_data: Vec<(f64, f64)> = stats
+        .approx_diversity
+        .clone()
+        .into_iter()
+        .enumerate()
+        .map(|(a, b)| (a as f64, b as f64))
+        .collect();
+
     let fitness_datasets = vec![
         ("Best Fitness", best_fitness_data),
         ("Avg Fitness", avg_fitness_data),
     ];
     let genome_datasets = vec![("Avg Genome Size", avg_genome_size_data)];
+    let diversity_datasets = vec![("Diversity", diversity_data)];
 
     let fitness_chart = chart("Fitness", "Generation", "Fitness", &fitness_datasets);
     let genome_size_chart = chart("Genome Size", "Generation", "Size", &genome_datasets);
+    let diversity_chart = chart("Diversity", "Generation", "Diversity", &diversity_datasets);
 
     terminal.draw(|frame| {
         let layout = Layout::default()
@@ -135,6 +145,13 @@ pub fn draw<'a>(
             .split(frame.area());
 
         frame.render_widget(fitness_chart, layout[0]);
-        frame.render_widget(genome_size_chart, layout[1]);
+
+        let bottom = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
+            .split(layout[1]);
+
+        frame.render_widget(genome_size_chart, bottom[0]);
+        frame.render_widget(diversity_chart, bottom[1]);
     })
 }
